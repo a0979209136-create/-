@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教師端學習監控｜生物會考複習系統</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="dashboard-page staff-mode">
+    <header class="topbar">
+      <a class="brand" href="index.html#dashboard">
+        <span class="brand-mark">B</span>
+        <span>
+          <strong>教師端學習監控</strong>
+          <small>班級進度・弱點分析・網站優化</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="教師端導覽">
+        <a href="#teacherDashboard">學習儀表板</a>
+        <a href="#studentReport">學生報告</a>
+        <a href="#classOverview">班級總覽</a>
+        <a href="#feedbackInbox">回饋管理</a>
+        <a href="#optimizationRadar">優化雷達</a>
+        <a href="admin-dashboard.html">教務端</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero dashboard-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">帶班作戰室</p>
+          <h1>看見全班正在卡住的地方。</h1>
+          <p>這是教師端靜態原型，使用示範資料呈現登入、診斷、錯題筆記、復仇檢核、章節熟練度、回饋信箱與網站優化建議。</p>
+        </div>
+        <aside class="dashboard-panel">
+          <h2>篩選班級</h2>
+          <div class="control-grid">
+            <label>年級
+              <select id="gradeFilter">
+                <option value="all">全部年級</option>
+                <option value="8">八年級</option>
+                <option value="9">九年級</option>
+              </select>
+            </label>
+            <label>班級
+              <select id="classFilter"></select>
+            </label>
+            <label>章節
+              <select id="chapterFilter"></select>
+            </label>
+            <label>模考週次
+              <select id="mockFilter">
+                <option value="all">全部週次</option>
+                <option>模考前 8 週</option>
+                <option>模考前 4 週</option>
+                <option>模考前 2 週</option>
+              </select>
+            </label>
+            <label>完成狀態
+              <select id="statusFilter"></select>
+            </label>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section" aria-labelledby="teacher-dashboard-title">
+        <div class="section-head">
+          <p class="eyebrow">學習雷達總覽</p>
+          <h2 id="teacher-dashboard-title">教師端學習儀表板</h2>
+          <p>掌握全班登入、活躍度、診斷完成、筆記完成、復仇檢核與模考前進度。</p>
+        </div>
+        <div id="teacherDashboard"></div>
+      </section>
+
+      <section class="section band" aria-labelledby="student-report-title">
+        <div class="section-head">
+          <p class="eyebrow">個人學習切片</p>
+          <h2 id="student-report-title">學生個人報告</h2>
+          <p>點選上方學生姓名後，可查看最近登入、使用天數、完成章節、弱點概念、補救小測驗與是否落後模考進度。</p>
+        </div>
+        <div id="studentReport"></div>
+      </section>
+
+      <section class="section" aria-labelledby="class-overview-title">
+        <div class="section-head">
+          <p class="eyebrow">班級作戰地圖</p>
+          <h2 id="class-overview-title">班級與年級總覽</h2>
+          <p>切換年級、班級、章節、模考週次與完成狀態，找出需要補救教學的章節與尚未完成復仇檢核的學生。</p>
+        </div>
+        <div id="classOverview"></div>
+      </section>
+
+      <section class="section band" aria-labelledby="feedback-title">
+        <div class="section-head compact">
+          <p class="eyebrow">學生求救訊號</p>
+          <h2 id="feedback-title">學生意見信箱與教師端回饋管理</h2>
+          <p>學生可回報題目、詳解、操作、章節內容、功能建議、素養議題、登入或名冊錯誤；教師端可篩選、標記狀態並填寫處理備註。</p>
+        </div>
+        <div class="control-grid compact-controls">
+          <label>回饋類型
+            <select id="feedbackTypeFilter"></select>
+          </label>
+          <label>章節
+            <select id="feedbackChapterFilter"></select>
+          </label>
+        </div>
+        <div id="feedbackInbox"></div>
+      </section>
+
+      <section class="section" aria-labelledby="radar-title">
+        <div class="section-head">
+          <p class="eyebrow">網站優化雷達</p>
+          <h2 id="radar-title">把學生卡住的地方變成下一輪改版清單</h2>
+          <p>根據學生回饋與使用數據，自動整理最常卡住頁面、最難懂題目、最常被回報詳解、最常放棄流程、低使用率功能與優先修改項目。</p>
+        </div>
+        <div id="optimizationRadar"></div>
+      </section>
+
+      <section class="section band">
+        <div class="section-head">
+          <p class="eyebrow">正式上線提醒</p>
+          <h2>這個頁面目前使用靜態假資料</h2>
+          <p>真正的學生進度紀錄、教師監控、回饋處理與每週排行榜，需要後端資料庫或受權限保護的雲端資料源。不得把真實學生個資硬寫在公開前端程式碼中。</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

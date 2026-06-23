@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教務端網站優化後台｜生物會考複習系統</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="dashboard-page staff-mode admin-page">
+    <header class="topbar">
+      <a class="brand" href="index.html#dashboard">
+        <span class="brand-mark">B</span>
+        <span>
+          <strong>教務端後台</strong>
+          <small>名冊・題庫・模考・權限・資料匯出</small>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="teacher-dashboard.html">教師端</a>
+        <a href="#adminRoles">權限設計</a>
+        <a href="#adminData">資料匯入匯出</a>
+        <a href="#adminDeploy">部署提醒</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero dashboard-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">全校學習中控台</p>
+          <h1>把名冊、題庫、模考週次與權限整理在同一個後台。</h1>
+          <p>此頁是教務端靜態原型，正式版需串接後端資料庫、Google Workspace 或校方系統，才能安全管理學生資料與教師權限。</p>
+        </div>
+        <aside class="dashboard-panel">
+          <h2>教務端目前任務</h2>
+          <ol>
+            <li>匯入年度學生名冊。</li>
+            <li>設定八年級、九年級班級架構。</li>
+            <li>管理教師與導師權限。</li>
+            <li>維護題庫與詳解出處。</li>
+            <li>設定模考週次與完成進度。</li>
+          </ol>
+        </aside>
+      </section>
+
+      <section class="section" id="adminRoles">
+        <div class="section-head">
+          <p class="eyebrow">三層角色權限</p>
+          <h2>學生看自己，教師看班級，教務看全校</h2>
+        </div>
+        <div class="dash-grid">
+          <article class="dash-card">
+            <h2>學生端</h2>
+            <p>只能看自己的學習進度、任務、筆記、檢核與回饋表單。不可看到教師端與教務端資料。</p>
+          </article>
+          <article class="dash-card">
+            <h2>教師端</h2>
+            <p>可看班級與學生進度、題庫分析、學生回饋、補救教學建議。</p>
+          </article>
+          <article class="dash-card">
+            <h2>教務端</h2>
+            <p>可管理名冊、題庫、模考時程、公告、教師權限、資料匯入匯出。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section band" id="adminData">
+        <div class="section-head">
+          <p class="eyebrow">資料匯入匯出</p>
+          <h2>正式版資料表建議</h2>
+        </div>
+        <div class="dash-grid">
+          <article class="dash-card">
+            <h2>學生名冊</h2>
+            <p><code>data/student_directory.json</code></p>
+            <p>正式版應放在受保護資料庫或權限控管雲端資料源，用於學號姓名與 Google 信箱驗證。</p>
+          </article>
+          <article class="dash-card">
+            <h2>學習紀錄</h2>
+            <p><code>data/learning_logs.json</code></p>
+            <p>記錄 login、submit_diagnosis、generate_note、submit_revenge_check 等操作，用來生成教師端分析。</p>
+          </article>
+          <article class="dash-card">
+            <h2>意見信箱</h2>
+            <p><code>data/feedback_inbox.json</code></p>
+            <p>收集學生對題目、詳解、操作、名冊、功能與素養議題的回饋。</p>
+          </article>
+          <article class="dash-card">
+            <h2>題庫與詳解</h2>
+            <p>正式匯入題庫時需確認授權，詳解應標註出處與概念標籤。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="adminDeploy">
+        <div class="section-head">
+          <p class="eyebrow">正式部署提醒</p>
+          <h2>靜態版只能展示，正式版需要後端</h2>
+        </div>
+        <div class="dash-grid">
+          <article class="dash-card wide priority">
+            <h2>不可做的事</h2>
+            <ul>
+              <li>不得把真實學生名冊硬寫在公開 JavaScript。</li>
+              <li>不得讓學生端可用網址打開教師端資料。</li>
+              <li>不得把未授權考古題原文放入公開網站。</li>
+            </ul>
+          </article>
+          <article class="dash-card wide">
+            <h2>建議後端</h2>
+            <p>Firebase、Supabase、Google Sheets + Apps Script、學校伺服器皆可。若要串接教育局 Google 信箱，應使用 OAuth 或校方 SSO。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

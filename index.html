@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>生物會考複習系統</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#dashboard" aria-label="回到儀表板">
+        <span class="brand-mark">B</span>
+        <span>
+          <strong>生物會考複習系統</strong>
+          <small>素養導向・步驟化・可追蹤</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="主要導覽">
+        <a data-audience="student" href="#start">開始使用</a>
+        <a data-audience="student" href="#quiz">考古題診斷</a>
+        <a data-audience="student" href="#weekly-reading">時事閱讀</a>
+        <a data-audience="staff" href="teacher-dashboard.html">教師監控</a>
+        <a data-audience="staff" href="admin-dashboard.html">教務後台</a>
+      </nav>
+      <div class="access-tools">
+        <span id="accessStatus">學生端</span>
+        <button class="ghost-button" id="staffToggle" type="button">教職員入口</button>
+        <button class="ghost-button" id="printPlan" type="button">列印複習單</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="dashboard" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">新北市立義學國中先導版・可擴全國開放使用</p>
+          <h1 id="hero-title">把生物讀成一場能升級的任務。</h1>
+          <p>
+            先做考古題篩出不熟章節，再把錯題生成考試重點筆記，掌握八成常考核心；
+            最後重做考古題檢核成效並滾動修正，目標是增 A 減 C。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#start">開始使用</a>
+            <a class="secondary-button" href="#quiz">先做考古題診斷</a>
+          </div>
+        </div>
+        <div class="dashboard-panel" aria-label="今日複習概況">
+          <div class="panel-head">
+            <span>今日進度</span>
+            <strong id="progressLabel">0%</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span id="progressBar"></span>
+          </div>
+          <div class="stats-grid">
+            <div>
+              <strong id="doneCount">0</strong>
+              <span>已完成任務</span>
+            </div>
+            <div>
+              <strong>10</strong>
+              <span>複習章節</span>
+            </div>
+            <div>
+              <strong>40</strong>
+              <span>核心任務</span>
+            </div>
+            <div>
+              <strong id="checkCount">0</strong>
+              <span>章節評量</span>
+            </div>
+          </div>
+          <div class="exam-note">
+            <strong>增 A 減 C</strong>
+            <p>A 區練跨單元素養題；B 區補圖表與實驗推論；C 區先補核心概念與基本題，讓每位學生都有下一步。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section student-start" id="start" aria-labelledby="start-title">
+        <div class="section-head">
+          <p class="eyebrow">入場儀式</p>
+          <h2 id="start-title">選好你的路線，今天就開練</h2>
+          <p>登入後不用亂找功能，選擇七升八或八升九，系統會把今天該做的任務排成一條線。</p>
+        </div>
+        <div class="student-login" aria-label="學生身分驗證">
+          <div>
+            <h3>先確認你是本人</h3>
+            <p>請輸入學號與真實姓名，系統會與學校端匯入的年度學生名冊比對。</p>
+          </div>
+          <div class="login-fields">
+            <label>學號
+              <input id="loginStudentId" type="text" inputmode="numeric" placeholder="例如 410319">
+            </label>
+            <label>姓名
+              <input id="loginName" type="text" placeholder="請輸入真實姓名">
+            </label>
+          </div>
+          <div class="login-actions">
+            <button class="primary-button" id="verifyStudent" type="button">名冊審核並開始</button>
+            <span id="studentVerifyStatus">尚未驗證</span>
+          </div>
+          <p class="microcopy">學號與姓名每年由學校端匯入雲端名冊作為驗證依據；若無法通過，請用信箱回饋。</p>
+          <a class="feedback-link" href="mailto:?subject=生物複習網站學號姓名驗證問題">信箱回饋給教務端</a>
+        </div>
+        <div class="identity-grid" aria-label="身份選擇">
+          <button class="identity-card active" data-track="summer" type="button">
+            <span>七升八</span>
+            <strong>暑假維持記憶</strong>
+            <small>短任務、少壓力，保持熟悉感。</small>
+          </button>
+          <button class="identity-card" data-track="exam" type="button">
+            <span>八升九</span>
+            <strong>會考準備模式</strong>
+            <small>考古題診斷、錯題筆記、重做檢核。</small>
+          </button>
+        </div>
+        <div class="audience-panel" aria-live="polite">
+          <span id="trackLabel">目前模式：七升八</span>
+          <h3 id="trackTitle">暑假軟性複習，先把記憶留住</h3>
+          <p id="trackGoal">每天只要完成一個短任務：回想概念、做暖身題、看一張圖或整理一張小卡。</p>
+          <strong id="trackReward">獎勵重點：穩定回來複習、完成任務、保持熟悉感。</strong>
+        </div>
+        <div class="linear-flow" aria-label="線型任務步驟">
+          <article class="flow-step active">
+            <span>1</span>
+            <h3 id="flowStep1">先讓題目照出弱點</h3>
+            <p id="flowText1">不用先讀書，先用題目找出哪些概念快忘了。</p>
+            <a class="primary-button" href="#quiz">開始第 1 步</a>
+          </article>
+          <article class="flow-step">
+            <span>2</span>
+            <h3 id="flowStep2">打開你的弱點雷達</h3>
+            <p id="flowText2">把錯題標成章節、題型、錯因，知道自己卡在哪裡。</p>
+            <a class="secondary-button" href="#modules">看補強章節</a>
+          </article>
+          <article class="flow-step">
+            <span>3</span>
+            <h3 id="flowStep3">把錯題鍊成筆記</h3>
+            <p id="flowText3">只讀最需要補的八成考點，不用從第一頁重新讀。</p>
+            <a class="secondary-button" href="#past">開啟錯題煉金術</a>
+          </article>
+          <article class="flow-step">
+            <span>4</span>
+            <h3 id="flowStep4">回到戰場驗收</h3>
+            <p id="flowText4">答對就升級，答錯就回到錯題筆記修正。</p>
+            <a class="secondary-button" href="#game">查看進度</a>
+          </article>
+        </div>
+        <div class="student-next">
+          <strong>你現在只要做：</strong>
+          <span id="singleNextTask">先完成 6 到 8 題暖身考古題，找出快忘記的概念。</span>
+        </div>
+      </section>
+
+      <section class="section band" id="weekly-reading" aria-labelledby="weekly-title">
+        <div class="section-head compact">
+          <p class="eyebrow">本週生物雷達</p>
+          <h2 id="weekly-title">把新聞變成會考神隊友</h2>
+          <p>每週一則真實事件，連回一個生物章節。讀完只要抓三件事：概念、證據、還想追問什麼。</p>
+        </div>
+        <article class="weekly-card" id="weeklyCard" aria-live="polite"></article>
+      </section>
+
+      <section class="section band supporting-info" id="paths" aria-labelledby="paths-title">
+        <div class="section-head">
+          <p class="eyebrow">雙路線開局</p>
+          <h2 id="paths-title">七升八保溫，八升九衝刺</h2>
+          <p>學生一進來就知道自己要走哪條路：七升八輕量、有趣、維持記憶；八升九明確、扎實、朝會考表現前進。</p>
+        </div>
+        <div class="path-grid">
+          <article class="path-card summer">
+            <span class="path-badge">七升八</span>
+            <h3>暑假記憶維持任務</h3>
+            <p>每週 2 到 3 個短任務，重點是不要忘光：觀察生活、做小卡、答快問、完成章節小挑戰。</p>
+            <ul>
+              <li>每日 8 分鐘記憶喚醒。</li>
+              <li>以細胞、人體、植物基礎概念為主。</li>
+              <li>獎勵認真完成與穩定回來複習。</li>
+            </ul>
+          </article>
+          <article class="path-card exam">
+            <span class="path-badge">八升九</span>
+            <h3>會考準備衝刺任務</h3>
+            <p>先診斷，再補弱點；章末形成性評量後接考古題，建立讀題、判圖、排除選項與訂正能力。</p>
+            <ul>
+              <li>每章完成基礎、精熟、素養三層評量。</li>
+              <li>加入歷屆自然科題組與錯因標記。</li>
+              <li>老師後台追蹤 A 區、C 風險與弱章節。</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section supporting-info" id="today" aria-labelledby="today-title">
+        <div class="section-head">
+          <p class="eyebrow">錯題煉金迴圈</p>
+          <h2 id="today-title">把失分點變成升級材料</h2>
+          <p>不用從第一頁硬讀到最後一頁；先用題目抓弱點，再補最關鍵的八成考點。</p>
+        </div>
+        <div class="timeline">
+          <article>
+            <span>01</span>
+            <h3>讓考古題開雷達</h3>
+            <p>用歷屆題或仿考古題篩出不熟概念、章節與題型，建立個人弱點地圖。</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>錯題進鍊成爐</h3>
+            <p>把錯題轉成考試重點筆記：核心概念、常考陷阱、解題線索與一題一提醒。</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>先拿下高頻核心</h3>
+            <p>優先補會考高頻概念，C 線補基本題，B 線補圖表實驗，A 線補跨單元素養。</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>回頭打同類題</h3>
+            <p>看過重點後重新作答同類題，檢查是否真的能讀題、判圖、排除選項。</p>
+          </article>
+          <article>
+            <span>05</span>
+            <h3>越修越準</h3>
+            <p>若仍錯，回填錯因並更新學習地圖；若通過，解鎖下一章或更高難度題組。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="modules" aria-labelledby="modules-title">
+        <div class="section-head compact">
+          <p class="eyebrow">十章冒險地圖</p>
+          <h2 id="modules-title">把國中生物拆成可通關的十個區域</h2>
+          <p>依七上、七下學期整理章節。每章都有核心概念、題型任務、形成性評量、回饋與補強路徑。</p>
+        </div>
+        <div class="filters" aria-label="模組篩選">
+          <button class="chip active" data-filter="all" type="button">全部</button>
+          <button class="chip" data-filter="sem-七上" type="button">七上</button>
+          <button class="chip" data-filter="sem-七下" type="button">七下</button>
+          <button class="chip" data-filter="basic" type="button">基礎補強</button>
+          <button class="chip" data-filter="graph" type="button">圖表判讀</button>
+          <button class="chip" data-filter="issue" type="button">議題素養</button>
+        </div>
+        <div class="module-grid" id="moduleGrid"></div>
+      </section>
+
+      <section class="section band" id="game" aria-labelledby="game-title">
+        <div class="section-head">
+          <p class="eyebrow">本週升級榜</p>
+          <h2 id="game-title">認真會發光，進步也會上榜</h2>
+          <p>不只看誰分數最高，也看誰真的往前衝。前三名與進步獎分年段表揚。</p>
+        </div>
+        <div class="game-layout">
+          <article class="level-card">
+            <h3>我的生物等級</h3>
+            <label>年段
+              <select id="gradeSelect">
+                <option value="8">七升八／八年級</option>
+                <option value="9">八升九／九年級</option>
+              </select>
+            </label>
+            <label>學生姓名
+              <input id="studentName" type="text" placeholder="輸入姓名">
+            </label>
+            <div class="avatar-card">
+              <strong id="levelName">芽苗學徒</strong>
+              <p id="levelHelp">完成診斷與第一個章節任務即可升級。</p>
+              <div class="progress-track"><span id="xpBar"></span></div>
+              <small id="xpLabel">0 / 500 XP</small>
+            </div>
+            <button class="primary-button" id="addQuest" type="button">模擬完成今日任務 +50 XP</button>
+            <p class="microcopy">正式上線時可改成學生登入、Google Sheet 匯入或老師審核計分。</p>
+          </article>
+          <article class="rules-card">
+            <h3>本週經驗值怎麼拿</h3>
+            <ul>
+              <li>完成考古題診斷：50 XP。</li>
+              <li>完成章節任務：每節點 20 XP。</li>
+              <li>形成性評量達基礎：30 XP；達精熟：60 XP；達素養：90 XP。</li>
+              <li>考古題訂正完整：40 XP。</li>
+              <li>後設認知反思具體：20 XP。</li>
+            </ul>
+            <p class="microcopy">排行榜每週一 00:00 結算並刷新；前三名與進步獎分年段頒發。</p>
+          </article>
+          <article class="leaderboard">
+            <h3>八年級本週英雄榜</h3>
+            <p class="microcopy" id="rank8Week"></p>
+            <div id="rank8"></div>
+          </article>
+          <article class="leaderboard">
+            <h3>九年級本週英雄榜</h3>
+            <p class="microcopy" id="rank9Week"></p>
+            <div id="rank9"></div>
+          </article>
+          <article class="leaderboard improvement-board">
+            <h3>本週逆襲榜</h3>
+            <p class="microcopy" id="improvementWeek">依「網站前診斷分數」到「最近一次檢核分數」的進步幅度排序。</p>
+            <div id="improvementRank"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="past" aria-labelledby="past-title">
+        <div class="section-head compact">
+          <p class="eyebrow">錯題煉金術</p>
+          <h2 id="past-title">錯題煉金術</h2>
+          <p>先用題目抓弱點，再把錯題煉成重點筆記。不是刷題，是把失分點變成升級材料。</p>
+        </div>
+        <div class="past-grid">
+          <article>
+            <h3>第一輪：抓出破綻</h3>
+            <p>每題標記章節、概念、題型、錯因。不是為了分數，而是找出最值得補的地方。</p>
+          </article>
+          <article>
+            <h3>第二輪：鍊成筆記</h3>
+            <p>錯題筆記固定四欄：考點、我錯在哪、作答線索、下次提醒。</p>
+          </article>
+          <article>
+            <h3>第三輪：回場驗收</h3>
+            <p>看過重點後重做同題或同類題，若仍錯就更新筆記與學習地圖。</p>
+          </article>
+          <article>
+            <h3>官方題庫傳送門</h3>
+            <p>使用國中教育會考官方歷屆試題頁面，避免擅自複製題本造成版權疑慮。</p>
+            <a class="secondary-button" href="https://cap.rcpet.edu.tw/examination.html">開啟官方歷屆試題</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section band" id="issues" aria-labelledby="issues-title">
+        <div class="section-head">
+          <p class="eyebrow">素養事件簿</p>
+          <h2 id="issues-title">真實世界也會考生物</h2>
+          <p>這裡不是背新聞，而是把生活事件翻譯成生物概念、資料證據與可檢驗問題。</p>
+        </div>
+        <div class="issue-layout">
+          <aside class="issue-list" id="issueList" aria-label="議題列表"></aside>
+          <article class="issue-detail" id="issueDetail" aria-live="polite"></article>
+        </div>
+      </section>
+
+      <section class="section" id="quiz" aria-labelledby="quiz-title">
+        <div class="section-head compact">
+          <p class="eyebrow">弱點偵測器</p>
+          <h2 id="quiz-title">先做題，讓弱點自己現形</h2>
+          <p>用會考常見題型抓出不熟概念，再由微型 AI 筆記引擎把錯題轉成個人化重點筆記。</p>
+        </div>
+        <form class="quiz" id="quizForm"></form>
+        <div class="quiz-result" id="quizResult" hidden></div>
+      </section>
+
+      <section class="section band flow-output" id="generated-notes" aria-labelledby="notes-title" hidden>
+        <div class="section-head compact">
+          <p class="eyebrow">錯題鍊成室</p>
+          <h2 id="notes-title">把剛剛的失誤，變成你的專屬攻略</h2>
+          <p>先看懂系統幫你整理的心智圖、圖像記憶與常考重點，再進入復仇檢核。</p>
+        </div>
+        <div id="notesContent"></div>
+        <div class="flow-actions">
+          <button class="primary-button" id="confirmNotes" type="button">筆記吸收完畢，進入復仇檢核</button>
+        </div>
+      </section>
+
+      <section class="section flow-output" id="recheck" aria-labelledby="recheck-title" hidden>
+        <div class="section-head compact">
+          <p class="eyebrow">逆襲檢核場</p>
+          <h2 id="recheck-title">剛剛不會的，現在再打一次</h2>
+          <p>針對剛剛不熟的概念再做一次同類題。答完後系統會給回饋，決定是否回到筆記補強。</p>
+        </div>
+        <form class="quiz" id="recheckForm"></form>
+        <div class="quiz-result" id="recheckResult" hidden></div>
+      </section>
+
+      <section class="section band" id="student-feedback" aria-labelledby="student-feedback-title">
+        <div class="section-head compact">
+          <p class="eyebrow">學生求救信箱</p>
+          <h2 id="student-feedback-title">哪裡卡住，直接回報</h2>
+          <p>題目、詳解、操作、章節內容、功能建議、素養議題、登入與名冊問題都可以回報。正式版會送到教師端與教務端後台。</p>
+        </div>
+        <form class="feedback-form" id="studentFeedbackForm">
+          <label>回報類型
+            <select name="feedback_type" required>
+              <option value="">請選擇</option>
+              <option>題目看不懂</option>
+              <option>詳解看不懂</option>
+              <option>網站操作卡住</option>
+              <option>章節內容有錯</option>
+              <option>想增加某個功能</option>
+              <option>素養議題想討論</option>
+              <option>無法登入</option>
+              <option>名冊資料錯誤</option>
+            </select>
+          </label>
+          <label>所在頁面或章節
+            <input name="page_context" placeholder="例如：錯題鍊成室、第 8 章遺傳">
+          </label>
+          <label>相關題號
+            <input name="related_question_id" placeholder="例如：q10，沒有可留空">
+          </label>
+          <label>我想說
+            <textarea name="message" rows="4" required placeholder="請寫清楚你在哪裡卡住、哪一句看不懂、希望怎麼改善。"></textarea>
+          </label>
+          <button class="primary-button" type="submit">送出回饋</button>
+          <p class="microcopy" id="studentFeedbackStatus">靜態展示版會先存在本機瀏覽器；正式版會寫入後端意見信箱。</p>
+        </form>
+      </section>
+
+      <section class="section band staff-gate" id="staff-login" aria-labelledby="staff-login-title">
+        <div class="section-head">
+          <p class="eyebrow">老師後台門禁</p>
+          <h2 id="staff-login-title">教職員入口</h2>
+          <p>請輸入教職員代碼。</p>
+        </div>
+        <div class="gate-panel">
+          <label>展示用教職員代碼
+            <input id="staffCode" type="password" placeholder="輸入 demo">
+          </label>
+          <button class="primary-button" id="unlockStaff" type="button">進入教師端</button>
+          <button class="secondary-button" id="lockStaff" type="button">回到學生端</button>
+          <p id="gateMessage" class="microcopy">請向管理員確認代碼。</p>
+        </div>
+      </section>
+
+      <section class="section band staff-only" id="teacher" aria-labelledby="teacher-title">
+        <div class="section-head">
+          <p class="eyebrow">帶班作戰室</p>
+          <h2 id="teacher-title">看見全班卡在哪裡</h2>
+          <p>用來安排複習週、小考、討論任務與補救教學，讓教學節奏跟著學生狀態調整。</p>
+        </div>
+        <div class="teacher-grid">
+          <article>
+            <h3>四週複習節奏</h3>
+            <ol>
+              <li>第 1 週：細胞、養分、消化、循環、呼吸與排泄。</li>
+              <li>第 2 週：神經內分泌、感應、運動、生殖與遺傳。</li>
+              <li>第 3 週：演化、分類、生態系、能量流動與物質循環。</li>
+              <li>第 4 週：跨單元題組、探究實驗、圖表判讀與錯題重練。</li>
+            </ol>
+          </article>
+          <article>
+            <h3>錯題訂正格式</h3>
+            <p>每題只收四欄：題目證據、我選錯的理由、正確概念、下次辨識線索。避免學生只抄詳解。</p>
+          </article>
+          <article>
+            <h3>形成性評量節點</h3>
+            <p>每章結束用 3 層評量：知道名詞、能解釋資料、能遷移到新情境。未達標就回到對應補強任務。</p>
+          </article>
+          <article>
+            <h3>素養題引導句</h3>
+            <p>「這份資料能支持哪個說法？」「控制變因是什麼？」「還缺哪一組比較？」「這個結論能不能推廣？」</p>
+          </article>
+          <article>
+            <h3>分層任務</h3>
+            <p>A 組練跨圖表整合；B 組練題幹關鍵字與因果；C 組先補名詞、構造功能與生活例子。</p>
+          </article>
+          <article>
+            <h3>完整監控後台</h3>
+            <p>查看登入、診斷、錯題筆記、復仇檢核、個別學生報告、回饋信箱與網站優化雷達。</p>
+            <a class="primary-button" href="teacher-dashboard.html">開啟教師端 dashboard</a>
+          </article>
+          <article>
+            <h3>教務端管理</h3>
+            <p>管理名冊、題庫、模考時程、公告、教師權限與資料匯入匯出規格。</p>
+            <a class="secondary-button" href="admin-dashboard.html">開啟教務端後台</a>
+          </article>
+        </div>
+        <div class="backend">
+          <div class="backend-head">
+            <div>
+              <p class="eyebrow">班級儀表板</p>
+              <h3>一眼看出 A 區與 C 風險</h3>
+            </div>
+            <label>查看年段
+              <select id="teacherGrade">
+                <option value="8">八年級</option>
+                <option value="9">九年級</option>
+              </select>
+            </label>
+          </div>
+          <div class="analytics-grid">
+            <article>
+              <span>預估 A 區</span>
+              <strong id="aCount">0</strong>
+              <p>安排跨單元與考古題題組。</p>
+            </article>
+            <article>
+              <span>預估 C 風險</span>
+              <strong id="cCount">0</strong>
+              <p>優先安排基礎概念回補。</p>
+            </article>
+            <article>
+              <span>平均完成率</span>
+              <strong id="avgProgress">0%</strong>
+              <p>判斷班級複習節奏是否過快。</p>
+            </article>
+            <article>
+              <span>最弱章節</span>
+              <strong id="weakChapter">-</strong>
+              <p>下一堂課優先處理。</p>
+            </article>
+          </div>
+          <div class="backend-panels">
+            <article>
+              <h3>章節掌握熱區</h3>
+              <div class="heatmap" id="heatmap"></div>
+            </article>
+            <article>
+              <h3>需要加強名單</h3>
+              <div id="supportList"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section band staff-only" id="school" aria-labelledby="school-title">
+        <div class="section-head">
+          <p class="eyebrow">全校學習雷達</p>
+          <h2 id="school-title">讓導師、科任、教務端看同一張地圖</h2>
+          <p>義學國中先以七升八 16 班、八升九 19 班建置；架構保留全國開放學生使用，也可串接學校教務端、校務系統或帳號權限。</p>
+        </div>
+        <div class="school-controls">
+          <label>使用範圍
+            <select id="scopeSelect">
+              <option value="yixue">義學國中校內</option>
+              <option value="national">全國開放版</option>
+            </select>
+          </label>
+          <label>角色
+            <select id="roleSelect">
+              <option value="mentor">導師</option>
+              <option value="subject">科任老師</option>
+              <option value="admin">教務端</option>
+            </select>
+          </label>
+          <label>班級
+            <select id="classSelect">
+              <option value="801">801</option>
+              <option value="802">802</option>
+              <option value="901">901</option>
+              <option value="902">902</option>
+            </select>
+          </label>
+        </div>
+        <div class="school-grid">
+          <article class="school-card">
+            <h3 id="roleTitle">導師班級概況</h3>
+            <div id="roleSummary"></div>
+          </article>
+          <article class="school-card">
+            <h3>班級狀態雷達</h3>
+            <div class="class-bars" id="classBars"></div>
+          </article>
+          <article class="school-card wide">
+            <h3>學生追蹤清單</h3>
+            <div id="studentWatch"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section supporting-info" id="copyright" aria-labelledby="copyright-title">
+        <div class="section-head">
+          <p class="eyebrow">安心使用規則</p>
+          <h2 id="copyright-title">開放資源與版權說清楚</h2>
+          <p>本網站原型中的教學架構、章節任務、回饋語與示範資料為自製內容，可供校內教學調整使用。外部資料採連結引用，不重製題本、圖片或受著作權保護內容。</p>
+        </div>
+        <div class="copyright-grid">
+          <article>
+            <h3>開放式資源原則</h3>
+            <p>優先使用政府或官方公開頁面、開放授權素材、自製文字、自製圖表與學生自行產出的學習紀錄。</p>
+          </article>
+          <article>
+            <h3>考古題使用方式</h3>
+            <p>僅提供官方歷屆試題頁面連結，課堂使用時請依官方授權與學校合理使用規範處理，不在網站內上傳或重製完整題本。</p>
+          </article>
+          <article>
+            <h3>學生資料保護</h3>
+            <p>目前後台為示範資料。正式部署時應使用校內帳號、最小化蒐集資料，並讓學生與家長知道積分與分析用途。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>資料設計參考國中教育會考自然科命題方向與十二年國教自然科學領域素養精神。本站不重製官方試題，僅連結開放官方頁面。</p>
+      <div>
+        <a href="https://cap.rcpet.edu.tw/test4-6.html">會考自然科說明</a>
+        <a href="https://cap.rcpet.edu.tw/examination.html">歷屆試題</a>
+        <a href="https://www.naer.edu.tw/PageSyllabus?fid=52">十二年國教課綱</a>
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
