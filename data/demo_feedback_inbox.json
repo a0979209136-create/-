@@ -1,0 +1,17 @@
+[
+  {
+    "feedback_id": "DEMO-F001",
+    "timestamp": "2026-06-24T12:10:00+08:00",
+    "student_id": "BQ901",
+    "nickname": "滅世魔龍使",
+    "feedback_type": "詳解看不懂",
+    "page_context": "診斷挑戰",
+    "related_question_id": "Q0001",
+    "related_chapter_id": "C01",
+    "message": "希望細胞構造可以再多一張圖。",
+    "status": "demo",
+    "handled_by": "",
+    "admin_note": "靜態展示資料，正式版需接後端。",
+    "updated_at": "2026-06-24T12:10:00+08:00"
+  }
+]
