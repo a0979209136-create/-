@@ -3,111 +3,110 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>教務端網站優化後台｜生物會考複習系統</title>
+    <title>BioQuest 教務端管理說明</title>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body class="dashboard-page staff-mode admin-page">
+  <body class="dashboard-page admin-page">
     <header class="topbar">
-      <a class="brand" href="index.html#dashboard">
+      <a class="brand" href="index.html#home">
         <span class="brand-mark">B</span>
         <span>
-          <strong>教務端後台</strong>
-          <small>名冊・題庫・模考・權限・資料匯出</small>
+          <strong>BioQuest 教務端</strong>
+          <small>靜態展示與教務維護說明版</small>
         </span>
       </a>
       <nav class="nav">
-        <a href="teacher-dashboard.html">教師端</a>
-        <a href="#adminRoles">權限設計</a>
-        <a href="#adminData">資料匯入匯出</a>
-        <a href="#adminDeploy">部署提醒</a>
+        <a href="#data">資料維護</a>
+        <a href="#drive">雲端資料夾</a>
+        <a href="#deploy">部署更新</a>
+        <a href="#security">資安提醒</a>
       </nav>
     </header>
 
     <main>
       <section class="hero dashboard-hero">
         <div class="hero-copy">
-          <p class="eyebrow">全校學習中控台</p>
-          <h1>把名冊、題庫、模考週次與權限整理在同一個後台。</h1>
-          <p>此頁是教務端靜態原型，正式版需串接後端資料庫、Google Workspace 或校方系統，才能安全管理學生資料與教師權限。</p>
+          <p class="eyebrow">教務維護入口</p>
+          <h1>目前版本為「靜態展示與教務維護說明版」。</h1>
+          <p>本頁只說明題庫、章節、時事、公告與模考時程如何維護。暫時不做真實登入、真實名冊驗證或真實學生追蹤。</p>
         </div>
         <aside class="dashboard-panel">
-          <h2>教務端目前任務</h2>
-          <ol>
-            <li>匯入年度學生名冊。</li>
-            <li>設定八年級、九年級班級架構。</li>
-            <li>管理教師與導師權限。</li>
-            <li>維護題庫與詳解出處。</li>
-            <li>設定模考週次與完成進度。</li>
-          </ol>
+          <h2>正式追蹤需接後端</h2>
+          <p>若要追蹤學生學習狀況，需接 Google Sheet + Apps Script、Firebase、Supabase 或校內伺服器。</p>
         </aside>
       </section>
 
-      <section class="section" id="adminRoles">
+      <section class="section" id="data">
         <div class="section-head">
-          <p class="eyebrow">三層角色權限</p>
-          <h2>學生看自己，教師看班級，教務看全校</h2>
+          <p class="eyebrow">資料維護</p>
+          <h2>目前公開資料都是示範資料</h2>
         </div>
         <div class="dash-grid">
           <article class="dash-card">
-            <h2>學生端</h2>
-            <p>只能看自己的學習進度、任務、筆記、檢核與回饋表單。不可看到教師端與教務端資料。</p>
+            <h2>題庫資料</h2>
+            <p>維護 <code>data/questions.json</code>。每題需包含章節、概念標籤、選項、答案與詳解。</p>
           </article>
           <article class="dash-card">
-            <h2>教師端</h2>
-            <p>可看班級與學生進度、題庫分析、學生回饋、補救教學建議。</p>
+            <h2>章節資料</h2>
+            <p>維護 <code>data/chapters.json</code>。每章保留常考重點、迷思、學習地圖與圖像記憶。</p>
           </article>
           <article class="dash-card">
-            <h2>教務端</h2>
-            <p>可管理名冊、題庫、模考時程、公告、教師權限、資料匯入匯出。</p>
+            <h2>素養時事</h2>
+            <p>維護 <code>data/news_database.json</code>。新增時請放可信新聞、官方資料或期刊來源連結。</p>
+          </article>
+          <article class="dash-card">
+            <h2>重要公告</h2>
+            <p>維護 <code>data/announcements.json</code>。只放學生需要知道的任務提醒。</p>
+          </article>
+          <article class="dash-card">
+            <h2>模考時程</h2>
+            <p>維護 <code>data/mock_exam_schedule.json</code> 與 <code>data/exam_calendar.json</code>。</p>
+          </article>
+          <article class="dash-card">
+            <h2>測試稱號</h2>
+            <p>維護 <code>data/demo_student_directory.json</code>。只可放測試代號與稱號，不放真實姓名或學號。</p>
           </article>
         </div>
       </section>
 
-      <section class="section band" id="adminData">
+      <section class="section band" id="drive">
         <div class="section-head">
-          <p class="eyebrow">資料匯入匯出</p>
-          <h2>正式版資料表建議</h2>
+          <p class="eyebrow">Google Drive</p>
+          <h2>共用資料夾</h2>
+          <p><a class="secondary-button" href="https://drive.google.com/drive/folders/1rKPExJQ5cxQpcYymwAX0aMYg9mzvfjoU?usp=drive_link">開啟 BioQuest 共用資料夾</a></p>
+        </div>
+      </section>
+
+      <section class="section" id="deploy">
+        <div class="section-head">
+          <p class="eyebrow">部署與更新</p>
+          <h2>GitHub 更新後由 Netlify 重新部署</h2>
         </div>
         <div class="dash-grid">
           <article class="dash-card">
-            <h2>學生名冊</h2>
-            <p><code>data/student_directory.json</code></p>
-            <p>正式版應放在受保護資料庫或權限控管雲端資料源，用於學號姓名與 Google 信箱驗證。</p>
+            <h2>更新流程</h2>
+            <p>修改網站檔案後推到 GitHub main。若 Netlify 未自動部署，請到 Netlify 後台按 Trigger deploy。</p>
           </article>
           <article class="dash-card">
-            <h2>學習紀錄</h2>
-            <p><code>data/learning_logs.json</code></p>
-            <p>記錄 login、submit_diagnosis、generate_note、submit_revenge_check 等操作，用來生成教師端分析。</p>
-          </article>
-          <article class="dash-card">
-            <h2>意見信箱</h2>
-            <p><code>data/feedback_inbox.json</code></p>
-            <p>收集學生對題目、詳解、操作、名冊、功能與素養議題的回饋。</p>
-          </article>
-          <article class="dash-card">
-            <h2>題庫與詳解</h2>
-            <p>正式匯入題庫時需確認授權，詳解應標註出處與概念標籤。</p>
+            <h2>靜態限制</h2>
+            <p>靜態網站可顯示題目、章節、公告與時事，但不能安全保存真實學生紀錄。</p>
           </article>
         </div>
       </section>
 
-      <section class="section" id="adminDeploy">
+      <section class="section band" id="security">
         <div class="section-head">
-          <p class="eyebrow">正式部署提醒</p>
-          <h2>靜態版只能展示，正式版需要後端</h2>
+          <p class="eyebrow">資安提醒</p>
+          <h2>公開網站不放個資</h2>
         </div>
         <div class="dash-grid">
           <article class="dash-card wide priority">
-            <h2>不可做的事</h2>
+            <h2>不得公開</h2>
             <ul>
-              <li>不得把真實學生名冊硬寫在公開 JavaScript。</li>
-              <li>不得讓學生端可用網址打開教師端資料。</li>
-              <li>不得把未授權考古題原文放入公開網站。</li>
+              <li>真實學生姓名、真實學號、真實班級座號。</li>
+              <li>真實登入驗證規則、教師權限資料。</li>
+              <li>未授權考古題原文或圖片。</li>
             </ul>
-          </article>
-          <article class="dash-card wide">
-            <h2>建議後端</h2>
-            <p>Firebase、Supabase、Google Sheets + Apps Script、學校伺服器皆可。若要串接教育局 Google 信箱，應使用 OAuth 或校方 SSO。</p>
           </article>
         </div>
       </section>
