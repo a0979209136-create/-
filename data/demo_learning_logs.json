@@ -1,0 +1,21 @@
+[
+  {
+    "log_id": "DEMO-L001",
+    "timestamp": "2026-06-24T12:00:00+08:00",
+    "student_id": "BQ901",
+    "nickname": "滅世魔龍使",
+    "grade": 9,
+    "track": "exam",
+    "action_type": "submit_diagnosis",
+    "chapter_id": "C01",
+    "concept_tags": ["細胞構造"],
+    "question_id": "Q0001",
+    "is_correct": false,
+    "confidence_level": "not_sure",
+    "time_spent_seconds": 45,
+    "note_completed": true,
+    "revenge_check_completed": false,
+    "mastery_score": 60,
+    "next_task": "review_visual_note"
+  }
+]
