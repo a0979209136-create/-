@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>教師端學習監控｜生物會考複習系統</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+      .teacher-protected.locked {
+        display: none;
+      }
+    </style>
   </head>
   <body class="dashboard-page staff-mode">
     <header class="topbar">
@@ -38,72 +43,87 @@
         </label>
         <button class="primary-button" id="teacherLoginButton" type="button">進入教師 dashboard</button>
         <a class="secondary-button" href="index.html#start">回學生端首頁</a>
-        <p class="microcopy" id="teacherLoginMessage">學生不需要進入此頁；學生端只會顯示自己的任務、筆記與回饋表單。</p>
+        <p class="microcopy" id="teacherLoginMessage">學生端不顯示此入口；正式上線請由教師專用網址或 SSO 進入。</p>
       </div>
     </section>
 
-    <main class="teacher-protected locked" id="teacherDashboardApp">
-      <section class="hero dashboard-hero">
-        <div class="hero-copy">
-          <p class="eyebrow">帶班作戰室</p>
-          <h1>看見全班正在卡住的地方。</h1>
-          <p>這是教師端靜態原型，使用示範資料呈現登入、診斷、錯題筆記、復仇檢核、章節熟練度、回饋信箱與網站優化建議。</p>
-          <button class="secondary-button" id="teacherLogoutButton" type="button">登出教師端</button>
+    <main class="dashboard-shell teacher-protected locked" id="teacherDashboardApp" aria-hidden="true">
+      <section class="section hero-dashboard" aria-labelledby="teacher-hero-title">
+        <div>
+          <p class="eyebrow">BioQuest School Edition</p>
+          <h1 id="teacher-hero-title">把班級學習狀態看清楚，再把補救任務派精準</h1>
+          <p>本頁使用 demo 資料展示教師監控、學生報告、班級總覽、意見信箱與網站優化雷達。正式版需改接後端資料庫。</p>
         </div>
-        <aside class="dashboard-panel">
-          <h2>篩選班級</h2>
-          <div class="control-grid">
-            <label>年級
-              <select id="gradeFilter">
-                <option value="all">全部年級</option>
-                <option value="8">八年級</option>
-                <option value="9">九年級</option>
-              </select>
-            </label>
-            <label>班級
-              <select id="classFilter"></select>
-            </label>
-            <label>章節
-              <select id="chapterFilter"></select>
-            </label>
-            <label>模考週次
-              <select id="mockFilter">
-                <option value="all">全部週次</option>
-                <option>模考前 8 週</option>
-                <option>模考前 4 週</option>
-                <option>模考前 2 週</option>
-              </select>
-            </label>
-            <label>完成狀態
-              <select id="statusFilter"></select>
-            </label>
-          </div>
-        </aside>
+        <div class="hero-actions">
+          <a class="primary-button" href="index.html#start">查看學生端</a>
+          <a class="secondary-button" href="admin-dashboard.html">進入教務端</a>
+          <button class="secondary-button" id="teacherLogout" type="button">登出教師端</button>
+        </div>
       </section>
 
       <section class="section" aria-labelledby="teacher-dashboard-title">
-        <div class="section-head">
-          <p class="eyebrow">學習雷達總覽</p>
-          <h2 id="teacher-dashboard-title">教師端學習儀表板</h2>
-          <p>掌握全班登入、活躍度、診斷完成、筆記完成、復仇檢核與模考前進度。</p>
+        <div class="section-head compact">
+          <p class="eyebrow">教師端學習儀表板</p>
+          <h2 id="teacher-dashboard-title">班級進度總覽</h2>
+          <p>快速掌握登入、完成率、弱點章節與模考前進度。</p>
         </div>
-        <div id="teacherDashboard"></div>
+        <div class="control-grid compact-controls">
+          <label>年級
+            <select id="gradeFilter"></select>
+          </label>
+          <label>班級
+            <select id="classFilter"></select>
+          </label>
+          <label>章節
+            <select id="chapterFilter"></select>
+          </label>
+          <label>模考週次
+            <select id="mockFilter"></select>
+          </label>
+          <label>完成狀態
+            <select id="statusFilter"></select>
+          </label>
+        </div>
+        <div class="metrics-grid" id="teacherMetrics"></div>
+        <div class="dash-grid">
+          <article class="dash-card wide">
+            <h2>各章節平均熟練度</h2>
+            <div id="chapterMastery"></div>
+          </article>
+          <article class="dash-card wide">
+            <h2>各概念錯誤率排行</h2>
+            <div id="conceptErrors"></div>
+          </article>
+          <article class="dash-card">
+            <h2>未登入學生名單</h2>
+            <div id="notLoggedInList"></div>
+          </article>
+          <article class="dash-card">
+            <h2>模考前完成進度</h2>
+            <div id="mockProgress"></div>
+          </article>
+        </div>
       </section>
 
       <section class="section band" aria-labelledby="student-report-title">
-        <div class="section-head">
-          <p class="eyebrow">個人學習切片</p>
-          <h2 id="student-report-title">學生個人報告</h2>
-          <p>點選上方學生姓名後，可查看最近登入、使用天數、完成章節、弱點概念、補救小測驗與是否落後模考進度。</p>
+        <div class="section-head compact">
+          <p class="eyebrow">教師端個人學生報告</p>
+          <h2 id="student-report-title">一位學生，一張補強地圖</h2>
+          <p>查看最近登入、使用天數、完成章節、最弱概念、猜對但不穩概念與下一步任務。</p>
+        </div>
+        <div class="control-grid compact-controls">
+          <label>學生
+            <select id="studentSelect"></select>
+          </label>
         </div>
         <div id="studentReport"></div>
       </section>
 
       <section class="section" aria-labelledby="class-overview-title">
-        <div class="section-head">
-          <p class="eyebrow">班級作戰地圖</p>
-          <h2 id="class-overview-title">班級與年級總覽</h2>
-          <p>切換年級、班級、章節、模考週次與完成狀態，找出需要補救教學的章節與尚未完成復仇檢核的學生。</p>
+        <div class="section-head compact">
+          <p class="eyebrow">班級與年級總覽</p>
+          <h2 id="class-overview-title">找出需要補救教學的章節</h2>
+          <p>切換年級、班級、章節與完成狀態，掌握班級完成率、平均正確率、平均熟練度與復仇檢核名單。</p>
         </div>
         <div id="classOverview"></div>
       </section>
@@ -183,5 +203,43 @@
     </main>
 
     <script src="dashboard.js"></script>
+    <script>
+      (() => {
+        const key = "bioquest-teacher-dashboard-auth";
+        const gate = document.getElementById("teacherLoginGate");
+        const app = document.getElementById("teacherDashboardApp");
+        const button = document.getElementById("teacherLoginButton");
+        const code = document.getElementById("teacherLoginCode");
+        const message = document.getElementById("teacherLoginMessage");
+        const logout = document.getElementById("teacherLogout");
+        const unlock = () => {
+          if (!gate || !app) return;
+          gate.hidden = true;
+          app.classList.remove("locked");
+          app.removeAttribute("aria-hidden");
+          localStorage.setItem(key, "unlocked");
+        };
+        const lock = () => {
+          if (!gate || !app) return;
+          gate.hidden = false;
+          app.classList.add("locked");
+          app.setAttribute("aria-hidden", "true");
+          localStorage.removeItem(key);
+        };
+        button?.addEventListener("click", () => {
+          if ((code?.value || "").trim().toLowerCase() === "demo") {
+            unlock();
+          } else if (message) {
+            message.textContent = "展示版請輸入 demo。正式版會改用 Google 教育帳號驗證。";
+          }
+        });
+        code?.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") button?.click();
+        });
+        logout?.addEventListener("click", lock);
+        if (localStorage.getItem(key) === "unlocked") unlock();
+        else lock();
+      })();
+    </script>
   </body>
 </html>
