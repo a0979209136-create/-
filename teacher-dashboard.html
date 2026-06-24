@@ -21,16 +21,34 @@
         <a href="#classOverview">班級總覽</a>
         <a href="#feedbackInbox">回饋管理</a>
         <a href="#optimizationRadar">優化雷達</a>
+        <a href="#contentManagement">內容管理</a>
         <a href="admin-dashboard.html">教務端</a>
       </nav>
     </header>
 
-    <main>
+    <section class="section teacher-login-panel" id="teacherLoginGate" aria-labelledby="teacher-login-title">
+      <div class="section-head">
+        <p class="eyebrow">教師登入</p>
+        <h1 id="teacher-login-title">請由教師端登入後進入學習監控 dashboard</h1>
+        <p>靜態展示版可用代碼預覽後台；正式版需改接教育局 Google 帳號、校內 SSO 或後端角色權限。</p>
+      </div>
+      <div class="gate-panel">
+        <label>展示用教師代碼
+          <input id="teacherLoginCode" type="password" placeholder="輸入 demo">
+        </label>
+        <button class="primary-button" id="teacherLoginButton" type="button">進入教師 dashboard</button>
+        <a class="secondary-button" href="index.html#start">回學生端首頁</a>
+        <p class="microcopy" id="teacherLoginMessage">學生不需要進入此頁；學生端只會顯示自己的任務、筆記與回饋表單。</p>
+      </div>
+    </section>
+
+    <main class="teacher-protected locked" id="teacherDashboardApp">
       <section class="hero dashboard-hero">
         <div class="hero-copy">
           <p class="eyebrow">帶班作戰室</p>
           <h1>看見全班正在卡住的地方。</h1>
           <p>這是教師端靜態原型，使用示範資料呈現登入、診斷、錯題筆記、復仇檢核、章節熟練度、回饋信箱與網站優化建議。</p>
+          <button class="secondary-button" id="teacherLogoutButton" type="button">登出教師端</button>
         </div>
         <aside class="dashboard-panel">
           <h2>篩選班級</h2>
@@ -114,6 +132,45 @@
           <p>根據學生回饋與使用數據，自動整理最常卡住頁面、最難懂題目、最常被回報詳解、最常放棄流程、低使用率功能與優先修改項目。</p>
         </div>
         <div id="optimizationRadar"></div>
+      </section>
+
+      <section class="section band" id="contentManagement" aria-labelledby="content-management-title">
+        <div class="section-head">
+          <p class="eyebrow">內容維護台</p>
+          <h2 id="content-management-title">時事、公告、題庫檢查器</h2>
+          <p>教師可先用此頁整理要新增的時事閱讀與公告；正式版再寫入 news_database.json、announcements.json 與題庫資料庫。</p>
+        </div>
+        <div class="dash-grid">
+          <article class="dash-card">
+            <h2>時事管理</h2>
+            <label>網址
+              <input placeholder="貼上新聞、官方資料或期刊網址">
+            </label>
+            <label>章節
+              <select><option>生命世界與細胞</option><option>遺傳與生物科技</option><option>生態與永續</option></select>
+            </label>
+            <label>標籤
+              <select><option>疾病</option><option>生態</option><option>遺傳</option><option>環境</option><option>永續</option><option>生物倫理</option><option>科技</option><option>健康</option></select>
+            </label>
+            <textarea rows="3" placeholder="摘要與討論問題"></textarea>
+            <p class="microcopy">靜態版不會真的送出；正式版應寫入受權限保護的時事資料庫。</p>
+          </article>
+          <article class="dash-card">
+            <h2>公告管理</h2>
+            <label>公告類型
+              <select><option>模考提醒</option><option>段考提醒</option><option>系統公告</option><option>活動公告</option></select>
+            </label>
+            <label>公告對象
+              <select><option>全校</option><option>八年級</option><option>九年級</option><option>教師端</option></select>
+            </label>
+            <textarea rows="4" placeholder="公告內容"></textarea>
+            <p class="microcopy">正式版會寫入 announcements.json 或後端公告表。</p>
+          </article>
+          <article class="dash-card wide">
+            <h2>題庫檢查器</h2>
+            <div id="questionChecker"></div>
+          </article>
+        </div>
       </section>
 
       <section class="section band">
