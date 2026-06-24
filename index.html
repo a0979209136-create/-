@@ -32,7 +32,7 @@
       </nav>
       <div class="access-tools">
         <span id="accessStatus">學生端</span>
-        <button class="ghost-button" id="printPlan" type="button">列印複習單</button>
+        <a class="ghost-button" href="admin-dashboard.html" aria-label="前往教務端後台">教務端入口</a>
       </div>
     </header>
 
@@ -51,35 +51,15 @@
           </div>
         </div>
         <div class="dashboard-panel" aria-label="今日複習概況">
-          <div class="panel-head">
-            <span>今日進度</span>
-            <strong id="progressLabel">0%</strong>
-          </div>
-          <div class="progress-track" aria-hidden="true">
-            <span id="progressBar"></span>
-          </div>
+          <div class="panel-head"><span>今日進度</span><strong id="progressLabel">0%</strong></div>
+          <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
           <div class="stats-grid">
-            <div>
-              <strong id="doneCount">0</strong>
-              <span>已完成任務</span>
-            </div>
-            <div>
-              <strong>10</strong>
-              <span>複習章節</span>
-            </div>
-            <div>
-              <strong>40</strong>
-              <span>核心任務</span>
-            </div>
-            <div>
-              <strong id="checkCount">0</strong>
-              <span>章節評量</span>
-            </div>
+            <div><strong id="doneCount">0</strong><span>已完成任務</span></div>
+            <div><strong>10</strong><span>複習章節</span></div>
+            <div><strong>40</strong><span>核心任務</span></div>
+            <div><strong id="checkCount">0</strong><span>章節評量</span></div>
           </div>
-          <div class="exam-note">
-            <strong>增 A 減 C</strong>
-            <p>A 區練跨單元素養題；B 區補圖表與實驗推論；C 區先補核心概念與基本題，讓每位學生都有下一步。</p>
-          </div>
+          <div class="exam-note"><strong>增 A 減 C</strong><p>A 區練跨單元素養題；B 區補圖表與實驗推論；C 區先補核心概念與基本題，讓每位學生都有下一步。</p></div>
         </div>
       </section>
 
@@ -90,205 +70,119 @@
           <p>系統會依日期判斷學習階段，提醒會考、模考、本週任務與本月目標。日期為範本，正式版由教務端更新。</p>
         </div>
         <div class="countdown-grid">
-          <article class="count-card">
-            <span>會考倒數</span>
-            <strong id="capCountdown">--</strong>
-            <p id="capDateLabel">等待資料</p>
-          </article>
-          <article class="count-card">
-            <span>下一次模考</span>
-            <strong id="mockCountdown">--</strong>
-            <p id="mockDateLabel">等待資料</p>
-          </article>
-          <article class="count-card">
-            <span>目前階段</span>
-            <strong id="learningPhase">--</strong>
-            <p id="phaseHelp">系統自動判斷</p>
-          </article>
+          <article class="count-card"><span>會考倒數</span><strong id="capCountdown">--</strong><p id="capDateLabel">等待資料</p></article>
+          <article class="count-card"><span>下一次模考</span><strong id="mockCountdown">--</strong><p id="mockDateLabel">等待資料</p></article>
+          <article class="count-card"><span>目前階段</span><strong id="learningPhase">--</strong><p id="phaseHelp">系統自動判斷</p></article>
         </div>
         <div class="mission-grid">
-          <article>
-            <h3>本週任務</h3>
-            <p id="weeklyMission">完成一次弱點診斷、生成一張圖像筆記、完成一次復仇檢核。</p>
-          </article>
-          <article>
-            <h3>本月目標</h3>
-            <p id="monthlyGoal">完成兩章補強與一回跨章節素養題組。</p>
-          </article>
-          <article>
-            <h3>本週診斷</h3>
-            <div class="progress-track"><span id="weeklyDiagnosticBar"></span></div>
-            <p id="weeklyDiagnosticLabel">先完成弱點偵測器。</p>
-          </article>
+          <article><h3>本週任務</h3><p id="weeklyMission">完成一次弱點診斷、生成一張圖像筆記、完成一次復仇檢核。</p></article>
+          <article><h3>本月目標</h3><p id="monthlyGoal">完成兩章補強與一回跨章節素養題組。</p></article>
+          <article><h3>本週診斷</h3><div class="progress-track"><span id="weeklyDiagnosticBar"></span></div><p id="weeklyDiagnosticLabel">先完成弱點偵測器。</p></article>
         </div>
         <div class="announcement-strip" id="announcementStrip" aria-live="polite"></div>
       </section>
 
       <section class="section student-start" id="start" aria-labelledby="start-title">
-        <div class="section-head">
-          <p class="eyebrow">入場儀式</p>
-          <h2 id="start-title">選好你的路線，今天就開練</h2>
-          <p>登入後不用亂找功能，選擇七升八或八升九，系統會把今天該做的任務排成一條線。</p>
-        </div>
+        <div class="section-head"><p class="eyebrow">入場儀式</p><h2 id="start-title">選好你的路線，今天就開練</h2><p>登入後不用亂找功能，選擇七升八或八升九，系統會把今天該做的任務排成一條線。</p></div>
         <div class="student-login" aria-label="學生身分驗證">
-          <div>
-            <h3>先確認你是本人</h3>
-            <p>請輸入學號與真實姓名，系統會與學校端匯入的年度學生名冊比對。</p>
-          </div>
-          <div class="login-fields">
-            <label>學號
-              <input id="loginStudentId" type="text" inputmode="numeric" placeholder="例如 410319">
-            </label>
-            <label>姓名
-              <input id="loginName" type="text" placeholder="請輸入真實姓名">
-            </label>
-          </div>
-          <div class="login-actions">
-            <button class="primary-button" id="verifyStudent" type="button">名冊審核並開始</button>
-            <span id="studentVerifyStatus">尚未驗證</span>
-          </div>
+          <div><h3>先確認你是本人</h3><p>請輸入學號與真實姓名，系統會與學校端匯入的年度學生名冊比對。</p></div>
+          <div class="login-fields"><label>學號<input id="loginStudentId" type="text" inputmode="numeric" placeholder="例如 410319"></label><label>姓名<input id="loginName" type="text" placeholder="請輸入真實姓名"></label></div>
+          <div class="login-actions"><button class="primary-button" id="verifyStudent" type="button">名冊審核並開始</button><span id="studentVerifyStatus">尚未驗證</span></div>
           <p class="microcopy">學號與姓名每年由學校端匯入雲端名冊作為驗證依據；若無法通過，請用信箱回饋。</p>
           <a class="feedback-link" href="mailto:?subject=生物複習網站學號姓名驗證問題">信箱回饋給教務端</a>
         </div>
         <div class="identity-grid" aria-label="身份選擇">
-          <button class="identity-card active" data-track="summer" type="button">
-            <span>七升八</span>
-            <strong>暑假維持記憶</strong>
-            <small>短任務、少壓力，保持熟悉感。</small>
-          </button>
-          <button class="identity-card" data-track="exam" type="button">
-            <span>八升九</span>
-            <strong>會考準備模式</strong>
-            <small>考古題診斷、錯題筆記、重做檢核。</small>
-          </button>
+          <button class="identity-card active" data-track="summer" type="button"><span>七升八</span><strong>暑假維持記憶</strong><small>短任務、少壓力，保持熟悉感。</small></button>
+          <button class="identity-card" data-track="exam" type="button"><span>八升九</span><strong>會考準備模式</strong><small>考古題診斷、錯題筆記、重做檢核。</small></button>
         </div>
-        <div class="audience-panel" aria-live="polite">
-          <span id="trackLabel">目前模式：七升八</span>
-          <h3 id="trackTitle">暑假軟性複習，先把記憶留住</h3>
-          <p id="trackGoal">每天只要完成一個短任務：回想概念、做暖身題、看一張圖或整理一張小卡。</p>
-          <strong id="trackReward">獎勵重點：穩定回來複習、完成任務、保持熟悉感。</strong>
-        </div>
+        <div class="audience-panel" aria-live="polite"><span id="trackLabel">目前模式：七升八</span><h3 id="trackTitle">暑假軟性複習，先把記憶留住</h3><p id="trackGoal">每天只要完成一個短任務：回想概念、做暖身題、看一張圖或整理一張小卡。</p><strong id="trackReward">獎勵重點：穩定回來複習、完成任務、保持熟悉感。</strong></div>
         <div class="linear-flow" aria-label="線型任務步驟">
-          <article class="flow-step active">
-            <span>1</span>
-            <h3 id="flowStep1">先讓題目照出弱點</h3>
-            <p id="flowText1">不用先讀書，先用題目找出哪些概念快忘了。</p>
-            <a class="primary-button" href="#quiz">開始第 1 步</a>
-          </article>
-          <article class="flow-step">
-            <span>2</span>
-            <h3 id="flowStep2">打開你的弱點雷達</h3>
-            <p id="flowText2">把錯題標成章節、題型、錯因，知道自己卡在哪裡。</p>
-            <a class="secondary-button" href="#modules">看補強章節</a>
-          </article>
-          <article class="flow-step">
-            <span>3</span>
-            <h3 id="flowStep3">把錯題鍊成筆記</h3>
-            <p id="flowText3">只讀最需要補的八成考點，不用從第一頁重新讀。</p>
-            <a class="secondary-button" href="#past">開啟錯題煉金術</a>
-          </article>
-          <article class="flow-step">
-            <span>4</span>
-            <h3 id="flowStep4">回到戰場驗收</h3>
-            <p id="flowText4">答對就升級，答錯就回到錯題筆記修正。</p>
-            <a class="secondary-button" href="#game">查看進度</a>
-          </article>
+          <article class="flow-step active"><span>1</span><h3 id="flowStep1">先讓題目照出弱點</h3><p id="flowText1">不用先讀書，先用題目找出哪些概念快忘了。</p><a class="primary-button" href="#quiz">開始第 1 步</a></article>
+          <article class="flow-step"><span>2</span><h3 id="flowStep2">打開你的弱點雷達</h3><p id="flowText2">把錯題標成章節、題型、錯因，知道自己卡在哪裡。</p><a class="secondary-button" href="#modules">看補強章節</a></article>
+          <article class="flow-step"><span>3</span><h3 id="flowStep3">把錯題鍊成筆記</h3><p id="flowText3">只讀最需要補的八成考點，不用從第一頁重新讀。</p><a class="secondary-button" href="#past">開啟錯題煉金術</a></article>
+          <article class="flow-step"><span>4</span><h3 id="flowStep4">回到戰場驗收</h3><p id="flowText4">答對就升級，答錯就回到錯題筆記修正。</p><a class="secondary-button" href="#game">查看進度</a></article>
         </div>
-        <div class="student-next">
-          <strong>你現在只要做：</strong>
-          <span id="singleNextTask">先完成 6 到 8 題暖身考古題，找出快忘記的概念。</span>
-        </div>
+        <div class="student-next"><strong>你現在只要做：</strong><span id="singleNextTask">先完成 6 到 8 題暖身考古題，找出快忘記的概念。</span></div>
       </section>
 
       <section class="section band" id="weekly-reading" aria-labelledby="weekly-title">
-        <div class="section-head compact">
-          <p class="eyebrow">本週生物雷達</p>
-          <h2 id="weekly-title">把新聞變成會考神隊友</h2>
-          <p>每週一則真實事件，連回一個生物章節。讀完只要抓三件事：概念、證據、還想追問什麼。</p>
-        </div>
+        <div class="section-head compact"><p class="eyebrow">本週生物雷達</p><h2 id="weekly-title">把新聞變成會考神隊友</h2><p>每週一則真實事件，連回一個生物章節。讀完只要抓三件事：概念、證據、還想追問什麼。</p></div>
         <article class="weekly-card" id="weeklyCard" aria-live="polite"></article>
       </section>
 
       <section class="section" id="quiz" aria-labelledby="quiz-title">
-        <div class="section-head compact">
-          <p class="eyebrow">弱點偵測器</p>
-          <h2 id="quiz-title">先做題，讓弱點自己現形</h2>
-          <p>用會考常見題型抓出不熟概念，再由微型 AI 筆記引擎把錯題轉成個人化重點筆記。</p>
-        </div>
+        <div class="section-head compact"><p class="eyebrow">弱點偵測器</p><h2 id="quiz-title">先做題，讓弱點自己現形</h2><p>用會考常見題型抓出不熟概念，再由微型 AI 筆記引擎把錯題轉成個人化重點筆記。</p></div>
         <form class="quiz" id="quizForm"></form>
         <div class="quiz-result" id="quizResult" hidden></div>
       </section>
 
       <section class="section band flow-output" id="generated-notes" aria-labelledby="notes-title" hidden>
-        <div class="section-head compact">
-          <p class="eyebrow">錯題鍊成室</p>
-          <h2 id="notes-title">把剛剛的失誤，變成你的專屬攻略</h2>
-          <p>先看懂系統幫你整理的心智圖、圖像記憶與常考重點，再進入復仇檢核。</p>
-        </div>
+        <div class="section-head compact"><p class="eyebrow">錯題鍊成室</p><h2 id="notes-title">把剛剛的失誤，變成你的專屬攻略</h2><p>先看懂系統幫你整理的心智圖、圖像記憶與常考重點，再進入復仇檢核。</p></div>
         <div id="notesContent"></div>
-        <div class="flow-actions">
-          <button class="primary-button" id="confirmNotes" type="button">筆記吸收完畢，進入復仇檢核</button>
-        </div>
+        <div class="flow-actions"><button class="primary-button" id="confirmNotes" type="button">筆記吸收完畢，進入復仇檢核</button></div>
       </section>
 
       <section class="section flow-output" id="recheck" aria-labelledby="recheck-title" hidden>
-        <div class="section-head compact">
-          <p class="eyebrow">逆襲檢核場</p>
-          <h2 id="recheck-title">剛剛不會的，現在再打一次</h2>
-          <p>針對剛剛不熟的概念再做一次同類題。答完後系統會給回饋，決定是否回到筆記補強。</p>
-        </div>
+        <div class="section-head compact"><p class="eyebrow">逆襲檢核場</p><h2 id="recheck-title">剛剛不會的，現在再打一次</h2><p>針對剛剛不熟的概念再做一次同類題。答完後系統會給回饋，決定是否回到筆記補強。</p></div>
         <form class="quiz" id="recheckForm"></form>
         <div class="quiz-result" id="recheckResult" hidden></div>
       </section>
 
       <section class="section band" id="student-feedback" aria-labelledby="student-feedback-title">
-        <div class="section-head compact">
-          <p class="eyebrow">學生求救信箱</p>
-          <h2 id="student-feedback-title">哪裡卡住，直接回報</h2>
-          <p>題目、詳解、操作、章節內容、功能建議、素養議題、登入與名冊問題都可以回報。正式版會送到教師端與教務端後台。</p>
-        </div>
+        <div class="section-head compact"><p class="eyebrow">學生求救信箱</p><h2 id="student-feedback-title">哪裡卡住，直接回報</h2><p>題目、詳解、操作、章節內容、功能建議、素養議題、登入與名冊問題都可以回報。正式版會送到教師端與教務端後台。</p></div>
         <form class="feedback-form" id="studentFeedbackForm">
-          <label>回報類型
-            <select name="feedback_type" required>
-              <option value="">請選擇</option>
-              <option>題目看不懂</option>
-              <option>詳解看不懂</option>
-              <option>網站操作卡住</option>
-              <option>章節內容有錯</option>
-              <option>想增加某個功能</option>
-              <option>素養議題想討論</option>
-              <option>無法登入</option>
-              <option>名冊資料錯誤</option>
-            </select>
-          </label>
-          <label>所在頁面或章節
-            <input name="page_context" placeholder="例如：錯題鍊成室、第 8 章遺傳">
-          </label>
-          <label>相關題號
-            <input name="related_question_id" placeholder="例如：q10，沒有可留空">
-          </label>
-          <label>我想說
-            <textarea name="message" rows="4" required placeholder="請寫清楚你在哪裡卡住、哪一句看不懂、希望怎麼改善。"></textarea>
-          </label>
+          <label>回報類型<select name="feedback_type" required><option value="">請選擇</option><option>題目看不懂</option><option>詳解看不懂</option><option>網站操作卡住</option><option>章節內容有錯</option><option>想增加某個功能</option><option>素養議題想討論</option><option>無法登入</option><option>名冊資料錯誤</option></select></label>
+          <label>所在頁面或章節<input name="page_context" placeholder="例如：錯題鍊成室、第 8 章遺傳"></label>
+          <label>相關題號<input name="related_question_id" placeholder="例如：q10，沒有可留空"></label>
+          <label>我想說<textarea name="message" rows="4" required placeholder="請寫清楚你在哪裡卡住、哪一句看不懂、希望怎麼改善。"></textarea></label>
           <button class="primary-button" type="submit">送出回饋</button>
           <p class="microcopy" id="studentFeedbackStatus">靜態展示版會先存在本機瀏覽器；正式版會寫入後端意見信箱。</p>
         </form>
       </section>
 
       <section class="section supporting-info" id="copyright" aria-labelledby="copyright-title">
-        <div class="section-head">
-          <p class="eyebrow">安心使用規則</p>
-          <h2 id="copyright-title">開放資源與版權說清楚</h2>
-          <p>本網站原型中的教學架構、章節任務、回饋語與示範資料為自製內容，可供校內教學調整使用。外部資料採連結引用，不重製題本、圖片或受著作權保護內容。</p>
-        </div>
+        <div class="section-head"><p class="eyebrow">安心使用規則</p><h2 id="copyright-title">開放資源與版權說清楚</h2><p>本網站原型中的教學架構、章節任務、回饋語與示範資料為自製內容，可供校內教學調整使用。外部資料採連結引用，不重製題本、圖片或受著作權保護內容。</p></div>
         <div class="copyright-grid"><article><h3>開放式資源原則</h3><p>優先使用政府或官方公開頁面、開放授權素材、自製文字、自製圖表與學生自行產出的學習紀錄。</p></article><article><h3>考古題使用方式</h3><p>僅提供官方歷屆試題頁面連結，課堂使用時請依官方授權與學校合理使用規範處理，不在網站內上傳或重製完整題本。</p></article><article><h3>學生資料保護</h3><p>目前後台為示範資料。正式部署時應使用校內帳號、最小化蒐集資料，並讓學生與家長知道積分與分析用途。</p></article></div>
       </section>
-      <section data-compat-hidden aria-hidden="true"><button id="staffToggle" type="button"></button><section id="staff-login"><input id="staffCode"><button id="unlockStaff" type="button"></button><button id="lockStaff" type="button"></button><p id="gateMessage"></p></section><section id="teacher"></section><select id="teacherGrade"><option value="8">8</option></select><select id="scopeSelect"><option value="yixue">義學</option></select><select id="roleSelect"><option value="mentor">導師</option></select><select id="classSelect"><option value="801">801</option></select><div id="aCount"></div><div id="cCount"></div><div id="avgProgress"></div><div id="weakChapter"></div><div id="heatmap"></div><div id="supportList"></div><div id="roleTitle"></div><div id="roleSummary"></div><div id="classBars"></div><div id="studentWatch"></div></section>
+      <section data-compat-hidden aria-hidden="true">
+        <button id="staffToggle" type="button"></button>
+        <button id="printPlan" type="button"></button>
+        <section id="staff-login"><input id="staffCode"><button id="unlockStaff" type="button"></button><button id="lockStaff" type="button"></button><p id="gateMessage"></p></section>
+        <section id="teacher"></section>
+        <select id="teacherGrade"><option value="8">8</option></select>
+        <select id="scopeSelect"><option value="yixue">義學</option></select>
+        <select id="roleSelect"><option value="mentor">導師</option></select>
+        <select id="classSelect"><option value="801">801</option></select>
+        <div id="aCount"></div><div id="cCount"></div><div id="avgProgress"></div><div id="weakChapter"></div><div id="heatmap"></div><div id="supportList"></div><div id="roleTitle"></div><div id="roleSummary"></div><div id="classBars"></div><div id="studentWatch"></div>
+      </section>
     </main>
 
-    <footer class="footer"><p>資料設計參考國中教育會考自然科命題方向與十二年國教自然科學領域素養精神。本站不重製官方試題，僅連結開放官方頁面。</p><div><a href="https://cap.rcpet.edu.tw/test4-6.html">會考自然科說明</a><a href="https://cap.rcpet.edu.tw/examination.html">歷屆試題</a><a href="https://www.naer.edu.tw/PageSyllabus?fid=52">十二年國教課綱</a></div></footer>
+    <footer class="footer">
+      <p>資料設計參考國中教育會考自然科命題方向與十二年國教自然科學領域素養精神。本站不重製官方試題，僅連結開放官方頁面。</p>
+      <div><a href="https://cap.rcpet.edu.tw/test4-6.html">會考自然科說明</a><a href="https://cap.rcpet.edu.tw/examination.html">歷屆試題</a><a href="https://www.naer.edu.tw/PageSyllabus?fid=52">十二年國教課綱</a></div>
+    </footer>
 
     <script src="app.js"></script>
-    <script>(()=>{const c={capExam:{title:"115 年國中教育會考",examDate:"2027-05-15"},mockExams:[{title:"雙北一模範本",examDate:"2026-09-10"},{title:"雙北二模範本",examDate:"2026-12-17"},{title:"雙北三模範本",examDate:"2027-03-11"}],phases:[["暑假基礎期","2026-07-01","2026-08-31","七升八保溫，八升九建立會考讀書迴圈。"],["一模準備期","2026-09-01","2026-10-15","先補高頻核心，再練圖表與實驗題。"],["二模準備期","2026-11-01","2026-12-31","修正錯題筆記，強化跨章節素養題。"],["寒假衝刺期","2027-01-01","2027-02-15","整理弱章節，完成復仇檢核。"],["總複習期","2027-02-16","2027-04-15","整合十章與考古題策略。"],["最後衝刺期","2027-04-16","2027-05-15","穩住基本題，精準補最後弱點。"]],announcements:[["模考提醒","九年級每週至少完成一次診斷與一次復仇檢核。"],["暑假任務","七升八以短任務維持記憶，不拚速度。"],["安全提醒","公開版只放 demo 資料，真實名冊請放受保護後端。"]]};const $=id=>document.getElementById(id);const d=t=>Math.max(0,Math.ceil((new Date(`${t}T00:00:00+08:00`)-new Date())/86400000));const n=new Date();const p=c.phases.find(([,s,e])=>n>=new Date(`${s}T00:00:00+08:00`)&&n<=new Date(`${e}T23:59:59+08:00`))||["平日保溫期","","","維持每週一次診斷與一次復仇檢核。"];const m=c.mockExams.find(x=>new Date(`${x.examDate}T00:00:00+08:00`)>=n)||c.mockExams[0];if($("capCountdown"))$("capCountdown").textContent=`${d(c.capExam.examDate)} 天`;if($("capDateLabel"))$("capDateLabel").textContent=`${c.capExam.title}：${c.capExam.examDate}`;if($("mockCountdown"))$("mockCountdown").textContent=`${d(m.examDate)} 天`;if($("mockDateLabel"))$("mockDateLabel").textContent=`${m.title}：${m.examDate}`;if($("learningPhase"))$("learningPhase").textContent=p[0];if($("phaseHelp"))$("phaseHelp").textContent=p[3];if($("weeklyMission"))$("weeklyMission").textContent="完成一次弱點診斷、生成一張圖像筆記、完成一次復仇檢核。";if($("monthlyGoal"))$("monthlyGoal").textContent="完成兩章補強與一回跨章節素養題組。";if($("weeklyDiagnosticBar"))$("weeklyDiagnosticBar").style.width="20%";if($("weeklyDiagnosticLabel"))$("weeklyDiagnosticLabel").textContent="本週先完成弱點偵測器，接著看圖像筆記。";if($("announcementStrip"))$("announcementStrip").innerHTML=c.announcements.map(([a,b])=>`<article><strong>${a}</strong><span>${b}</span></article>`).join("");})();</script>
+    <script>
+      (() => {
+        const calendar = { capExam: { title: "115 年國中教育會考", examDate: "2027-05-15" }, mockExams: [{ title: "雙北一模範本", examDate: "2026-09-10" }, { title: "雙北二模範本", examDate: "2026-12-17" }, { title: "雙北三模範本", examDate: "2027-03-11" }], phases: [["暑假基礎期", "2026-07-01", "2026-08-31", "七升八保溫，八升九建立會考讀書迴圈。"], ["一模準備期", "2026-09-01", "2026-10-15", "先補高頻核心，再練圖表與實驗題。"], ["二模準備期", "2026-11-01", "2026-12-31", "修正錯題筆記，強化跨章節素養題。"], ["寒假衝刺期", "2027-01-01", "2027-02-15", "整理弱章節，完成復仇檢核。"], ["總複習期", "2027-02-16", "2027-04-15", "整合十章與考古題策略。"], ["最後衝刺期", "2027-04-16", "2027-05-15", "穩住基本題，精準補最後弱點。"]], announcements: [["模考提醒", "九年級每週至少完成一次診斷與一次復仇檢核。"], ["暑假任務", "七升八以短任務維持記憶，不拚速度。"], ["安全提醒", "公開版只放 demo 資料，真實名冊請放受保護後端。"]] };
+        const $ = (id) => document.getElementById(id);
+        const daysUntil = (dateText) => Math.max(0, Math.ceil((new Date(`${dateText}T00:00:00+08:00`) - new Date()) / 86400000));
+        const today = new Date();
+        const phase = calendar.phases.find(([, start, end]) => today >= new Date(`${start}T00:00:00+08:00`) && today <= new Date(`${end}T23:59:59+08:00`)) || ["平日保溫期", "", "", "維持每週一次診斷與一次復仇檢核。"];
+        const mock = calendar.mockExams.find((item) => new Date(`${item.examDate}T00:00:00+08:00`) >= today) || calendar.mockExams[0];
+        if ($("capCountdown")) $("capCountdown").textContent = `${daysUntil(calendar.capExam.examDate)} 天`;
+        if ($("capDateLabel")) $("capDateLabel").textContent = `${calendar.capExam.title}：${calendar.capExam.examDate}`;
+        if ($("mockCountdown")) $("mockCountdown").textContent = `${daysUntil(mock.examDate)} 天`;
+        if ($("mockDateLabel")) $("mockDateLabel").textContent = `${mock.title}：${mock.examDate}`;
+        if ($("learningPhase")) $("learningPhase").textContent = phase[0];
+        if ($("phaseHelp")) $("phaseHelp").textContent = phase[3];
+        if ($("weeklyMission")) $("weeklyMission").textContent = "完成一次弱點診斷、生成一張圖像筆記、完成一次復仇檢核。";
+        if ($("monthlyGoal")) $("monthlyGoal").textContent = "完成兩章補強與一回跨章節素養題組。";
+        if ($("weeklyDiagnosticBar")) $("weeklyDiagnosticBar").style.width = "20%";
+        if ($("weeklyDiagnosticLabel")) $("weeklyDiagnosticLabel").textContent = "本週先完成弱點偵測器，接著看圖像筆記。";
+        if ($("announcementStrip")) $("announcementStrip").innerHTML = calendar.announcements.map(([type, text]) => `<article><strong>${type}</strong><span>${text}</span></article>`).join("");
+      })();
+    </script>
   </body>
 </html>
