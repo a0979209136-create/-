@@ -17,14 +17,12 @@
       </a>
       <nav class="nav" aria-label="主要導覽">
         <a data-audience="student" href="#start">開始使用</a>
+        <a data-audience="student" href="#bioquest-countdown">任務倒數</a>
         <a data-audience="student" href="#quiz">考古題診斷</a>
         <a data-audience="student" href="#weekly-reading">時事閱讀</a>
-        <a data-audience="staff" href="teacher-dashboard.html">教師監控</a>
-        <a data-audience="staff" href="admin-dashboard.html">教務後台</a>
       </nav>
       <div class="access-tools">
         <span id="accessStatus">學生端</span>
-        <button class="ghost-button" id="staffToggle" type="button">教職員入口</button>
         <button class="ghost-button" id="printPlan" type="button">列印複習單</button>
       </div>
     </header>
@@ -74,6 +72,47 @@
             <p>A 區練跨單元素養題；B 區補圖表與實驗推論；C 區先補核心概念與基本題，讓每位學生都有下一步。</p>
           </div>
         </div>
+      </section>
+
+      <section class="section countdown-zone" id="bioquest-countdown" aria-labelledby="countdown-title">
+        <div class="section-head compact">
+          <p class="eyebrow">BioQuest School Edition</p>
+          <h2 id="countdown-title">今日任務雷達</h2>
+          <p>系統會依日期判斷學習階段，提醒會考、模考、本週任務與本月目標。日期為範本，正式版由教務端更新。</p>
+        </div>
+        <div class="countdown-grid">
+          <article class="count-card">
+            <span>會考倒數</span>
+            <strong id="capCountdown">--</strong>
+            <p id="capDateLabel">等待資料</p>
+          </article>
+          <article class="count-card">
+            <span>下一次模考</span>
+            <strong id="mockCountdown">--</strong>
+            <p id="mockDateLabel">等待資料</p>
+          </article>
+          <article class="count-card">
+            <span>目前階段</span>
+            <strong id="learningPhase">--</strong>
+            <p id="phaseHelp">系統自動判斷</p>
+          </article>
+        </div>
+        <div class="mission-grid">
+          <article>
+            <h3>本週任務</h3>
+            <p id="weeklyMission">完成一次弱點診斷、生成一張圖像筆記、完成一次復仇檢核。</p>
+          </article>
+          <article>
+            <h3>本月目標</h3>
+            <p id="monthlyGoal">完成兩章補強與一回跨章節素養題組。</p>
+          </article>
+          <article>
+            <h3>本週診斷</h3>
+            <div class="progress-track"><span id="weeklyDiagnosticBar"></span></div>
+            <p id="weeklyDiagnosticLabel">先完成弱點偵測器。</p>
+          </article>
+        </div>
+        <div class="announcement-strip" id="announcementStrip" aria-live="polite"></div>
       </section>
 
       <section class="section student-start" id="start" aria-labelledby="start-title">
@@ -402,158 +441,6 @@
           <button class="primary-button" type="submit">送出回饋</button>
           <p class="microcopy" id="studentFeedbackStatus">靜態展示版會先存在本機瀏覽器；正式版會寫入後端意見信箱。</p>
         </form>
-      </section>
-
-      <section class="section band staff-gate" id="staff-login" aria-labelledby="staff-login-title">
-        <div class="section-head">
-          <p class="eyebrow">老師後台門禁</p>
-          <h2 id="staff-login-title">教職員入口</h2>
-          <p>請輸入教職員代碼。</p>
-        </div>
-        <div class="gate-panel">
-          <label>展示用教職員代碼
-            <input id="staffCode" type="password" placeholder="輸入 demo">
-          </label>
-          <button class="primary-button" id="unlockStaff" type="button">進入教師端</button>
-          <button class="secondary-button" id="lockStaff" type="button">回到學生端</button>
-          <p id="gateMessage" class="microcopy">請向管理員確認代碼。</p>
-        </div>
-      </section>
-
-      <section class="section band staff-only" id="teacher" aria-labelledby="teacher-title">
-        <div class="section-head">
-          <p class="eyebrow">帶班作戰室</p>
-          <h2 id="teacher-title">看見全班卡在哪裡</h2>
-          <p>用來安排複習週、小考、討論任務與補救教學，讓教學節奏跟著學生狀態調整。</p>
-        </div>
-        <div class="teacher-grid">
-          <article>
-            <h3>四週複習節奏</h3>
-            <ol>
-              <li>第 1 週：細胞、養分、消化、循環、呼吸與排泄。</li>
-              <li>第 2 週：神經內分泌、感應、運動、生殖與遺傳。</li>
-              <li>第 3 週：演化、分類、生態系、能量流動與物質循環。</li>
-              <li>第 4 週：跨單元題組、探究實驗、圖表判讀與錯題重練。</li>
-            </ol>
-          </article>
-          <article>
-            <h3>錯題訂正格式</h3>
-            <p>每題只收四欄：題目證據、我選錯的理由、正確概念、下次辨識線索。避免學生只抄詳解。</p>
-          </article>
-          <article>
-            <h3>形成性評量節點</h3>
-            <p>每章結束用 3 層評量：知道名詞、能解釋資料、能遷移到新情境。未達標就回到對應補強任務。</p>
-          </article>
-          <article>
-            <h3>素養題引導句</h3>
-            <p>「這份資料能支持哪個說法？」「控制變因是什麼？」「還缺哪一組比較？」「這個結論能不能推廣？」</p>
-          </article>
-          <article>
-            <h3>分層任務</h3>
-            <p>A 組練跨圖表整合；B 組練題幹關鍵字與因果；C 組先補名詞、構造功能與生活例子。</p>
-          </article>
-          <article>
-            <h3>完整監控後台</h3>
-            <p>查看登入、診斷、錯題筆記、復仇檢核、個別學生報告、回饋信箱與網站優化雷達。</p>
-            <a class="primary-button" href="teacher-dashboard.html">開啟教師端 dashboard</a>
-          </article>
-          <article>
-            <h3>教務端管理</h3>
-            <p>管理名冊、題庫、模考時程、公告、教師權限與資料匯入匯出規格。</p>
-            <a class="secondary-button" href="admin-dashboard.html">開啟教務端後台</a>
-          </article>
-        </div>
-        <div class="backend">
-          <div class="backend-head">
-            <div>
-              <p class="eyebrow">班級儀表板</p>
-              <h3>一眼看出 A 區與 C 風險</h3>
-            </div>
-            <label>查看年段
-              <select id="teacherGrade">
-                <option value="8">八年級</option>
-                <option value="9">九年級</option>
-              </select>
-            </label>
-          </div>
-          <div class="analytics-grid">
-            <article>
-              <span>預估 A 區</span>
-              <strong id="aCount">0</strong>
-              <p>安排跨單元與考古題題組。</p>
-            </article>
-            <article>
-              <span>預估 C 風險</span>
-              <strong id="cCount">0</strong>
-              <p>優先安排基礎概念回補。</p>
-            </article>
-            <article>
-              <span>平均完成率</span>
-              <strong id="avgProgress">0%</strong>
-              <p>判斷班級複習節奏是否過快。</p>
-            </article>
-            <article>
-              <span>最弱章節</span>
-              <strong id="weakChapter">-</strong>
-              <p>下一堂課優先處理。</p>
-            </article>
-          </div>
-          <div class="backend-panels">
-            <article>
-              <h3>章節掌握熱區</h3>
-              <div class="heatmap" id="heatmap"></div>
-            </article>
-            <article>
-              <h3>需要加強名單</h3>
-              <div id="supportList"></div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section band staff-only" id="school" aria-labelledby="school-title">
-        <div class="section-head">
-          <p class="eyebrow">全校學習雷達</p>
-          <h2 id="school-title">讓導師、科任、教務端看同一張地圖</h2>
-          <p>義學國中先以七升八 16 班、八升九 19 班建置；架構保留全國開放學生使用，也可串接學校教務端、校務系統或帳號權限。</p>
-        </div>
-        <div class="school-controls">
-          <label>使用範圍
-            <select id="scopeSelect">
-              <option value="yixue">義學國中校內</option>
-              <option value="national">全國開放版</option>
-            </select>
-          </label>
-          <label>角色
-            <select id="roleSelect">
-              <option value="mentor">導師</option>
-              <option value="subject">科任老師</option>
-              <option value="admin">教務端</option>
-            </select>
-          </label>
-          <label>班級
-            <select id="classSelect">
-              <option value="801">801</option>
-              <option value="802">802</option>
-              <option value="901">901</option>
-              <option value="902">902</option>
-            </select>
-          </label>
-        </div>
-        <div class="school-grid">
-          <article class="school-card">
-            <h3 id="roleTitle">導師班級概況</h3>
-            <div id="roleSummary"></div>
-          </article>
-          <article class="school-card">
-            <h3>班級狀態雷達</h3>
-            <div class="class-bars" id="classBars"></div>
-          </article>
-          <article class="school-card wide">
-            <h3>學生追蹤清單</h3>
-            <div id="studentWatch"></div>
-          </article>
-        </div>
       </section>
 
       <section class="section supporting-info" id="copyright" aria-labelledby="copyright-title">
