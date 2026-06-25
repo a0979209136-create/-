@@ -1,261 +1,32 @@
-const dataFiles = {
-  chapters: "data/chapters.json",
-  questions: "data/questions.json",
-  news: "data/news_database.json",
-  announcements: "data/announcements.json",
-  mocks: "data/mock_exam_schedule.json",
-  calendar: "data/exam_calendar.json",
-  students: "data/demo_student_directory.json"
-};
-
-const sheetRoster = {
-  csvUrl: "https://docs.google.com/spreadsheets/d/1RVZeKYN8_FJsgNfNqfNlXzFEWc-I8bx9b_lyEgyOI2I/gviz/tq?tqx=out:csv&sheet=%E6%B8%AC%E8%A9%A6%E5%AD%B8%E7%94%9F%E5%90%8D%E5%86%8A"
-};
-
-const state = {
-  chapters: [],
-  questions: [],
-  news: [],
-  announcements: [],
-  mocks: [],
-  calendar: null,
-  students: [],
-  currentTrack: "summer",
-  weakChapterId: null
-};
-
-const $ = (selector) => document.querySelector(selector);
-
-async function loadJson(path, fallback) {
-  try {
-    const response = await fetch(path);
-    if (!response.ok) throw new Error(`${path} ${response.status}`);
-    return await response.json();
-  } catch (error) {
-    console.warn(`BioQuest data fallback: ${error.message}`);
-    return fallback;
-  }
-}
-
-function parseCsv(text) {
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let quoted = false;
-  for (let index = 0; index < text.length; index += 1) {
-    const char = text[index];
-    const next = text[index + 1];
-    if (char === '"' && quoted && next === '"') {
-      cell += '"';
-      index += 1;
-    } else if (char === '"') {
-      quoted = !quoted;
-    } else if (char === "," && !quoted) {
-      row.push(cell);
-      cell = "";
-    } else if ((char === "\n" || char === "\r") && !quoted) {
-      if (cell || row.length) rows.push([...row, cell]);
-      row = [];
-      cell = "";
-      if (char === "\r" && next === "\n") index += 1;
-    } else {
-      cell += char;
-    }
-  }
-  if (cell || row.length) rows.push([...row, cell]);
-  return rows;
-}
-
-async function loadStudents() {
-  try {
-    const response = await fetch(sheetRoster.csvUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Google Sheet ${response.status}`);
-    const rows = parseCsv(await response.text()).filter((row) => row.some(Boolean));
-    const headers = rows.shift().map((header) => header.trim());
-    const students = rows.map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index] || ""])))
-      .filter((item) => item.learning_id && item.nickname)
-      .map((item) => ({
-        student_id: item.learning_id,
-        nickname: item.nickname,
-        grade: Number(item.grade || 8),
-        class_id: item.class_id || "",
-        faction: item.faction || "未分派系",
-        track: item.track || (String(item.grade) === "9" ? "exam" : "summer"),
-        title_level: item.title_level || "N",
-        xp: Number(item.xp || 0),
-        achievement: item.achievement ? [item.achievement] : []
-      }));
-    if (students.length) return students;
-    throw new Error("Google Sheet roster empty");
-  } catch (error) {
-    console.warn(`BioQuest roster fallback: ${error.message}`);
-    return loadJson(dataFiles.students, []);
-  }
-}
-
-function daysUntil(dateText) {
-  if (!dateText) return "--";
-  const today = new Date();
-  const target = new Date(`${dateText}T00:00:00+08:00`);
-  return Math.max(0, Math.ceil((target.getTime() - today.getTime()) / 86400000));
-}
-
-function chapterName(chapterId) {
-  return state.chapters.find((chapter) => chapter.chapter_id === chapterId)?.chapter_name || "核心概念";
-}
-
-function setTrack(track) {
-  state.currentTrack = track;
-  document.querySelectorAll("[data-track]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.track === track);
-  });
-  const isExam = track === "exam";
-  $("#trackLabel").textContent = isExam ? "目前模式：八升九" : "目前模式：七升八";
-  $("#trackTitle").textContent = isExam ? "會考備戰模式" : "暑假保溫模式";
-  $("#trackGoal").textContent = isExam ? "先用診斷題找弱點，再看圖像筆記，最後用復仇檢核確認是否真的會。" : "每天完成一個短任務，維持細胞、人體、植物與生態概念的熟悉感。";
-  $("#singleNextTask").textContent = isExam ? "下一步：完成 8 題診斷挑戰。" : "下一步：完成 5 題暖身診斷。";
-}
-
-function renderTitleCard(student) {
-  $("#titleNickname").textContent = student.nickname;
-  $("#titleTrack").textContent = `所屬派系：${student.faction || "未分派系"}｜模式：${student.track === "exam" ? "九年級會考模式" : "八年級暑假模式"}`;
-  $("#titleXpBar").style.width = `${Math.min(100, Math.round((student.xp || 0) / 10))}%`;
-  $("#titleMeta").textContent = `稀有度 ${student.title_level || "N"}｜XP ${student.xp || 0}｜${(student.achievement || []).join("、") || "尚未解鎖成就"}`;
-}
-
-function verifyStudent() {
-  const studentId = $("#loginStudentId").value.trim();
-  const nickname = $("#loginNickname").value.trim();
-  const status = $("#studentVerifyStatus");
-  const show = (message, ok = false) => {
-    status.textContent = message;
-    status.classList.toggle("verified", ok);
-    status.classList.toggle("error", !ok);
-  };
-  if (!studentId && !nickname) return show("請輸入學習代號與稱號。範例：80101／滅世黑炎龍帝。");
-  if (!studentId) return show("請輸入學習代號。");
-  if (!nickname) return show("請輸入稱號。");
-  const student = state.students.find((item) => item.student_id === studentId && item.nickname === nickname);
-  if (!student) return show("查無此學習代號＋稱號。請確認文字完全相同。");
-  localStorage.setItem("bioquest_demo_student", JSON.stringify(student));
-  setTrack(student.track);
-  renderTitleCard(student);
-  show(`歡迎回來，${student.nickname}。所屬派系：${student.faction || "未分派系"}。模式：${student.track === "exam" ? "九年級會考模式" : "八年級暑假模式"}。稀有度：${student.title_level || "N"}。`, true);
-}
-
-function renderCountdown() {
-  const cap = state.calendar?.cap_exam;
-  const nextMock = state.mocks.find((mock) => daysUntil(mock.exam_date) !== "--" && daysUntil(mock.exam_date) > 0) || state.mocks[0];
-  $("#capCountdown").textContent = cap?.exam_date ? `${daysUntil(cap.exam_date)} 天` : "--";
-  $("#capDateLabel").textContent = cap?.exam_date ? `${cap.title}：${cap.exam_date}` : "請在 exam_calendar.json 設定";
-  $("#mockCountdown").textContent = nextMock?.exam_date ? `${daysUntil(nextMock.exam_date)} 天` : "--";
-  $("#mockDateLabel").textContent = nextMock?.exam_date ? `${nextMock.title}：${nextMock.exam_date}` : "請在 mock_exam_schedule.json 設定";
-  const mission = state.calendar?.weekly_mission || "完成診斷、筆記與復仇檢核。";
-  const goal = state.calendar?.monthly_goal || "完成兩章補強。";
-  const phase = state.calendar?.review_phase || "複習期";
-  document.querySelector(".countdown-grid article:nth-child(3) p").textContent = `${phase}｜${mission}｜${goal}`;
-}
-
-function renderAnnouncements() {
-  const active = state.announcements.filter((item) => item.is_active !== false).slice(0, 5);
-  $("#announcementStrip").innerHTML = active.map((item) => `<article><strong>${item.type || "公告"}</strong><span>${item.title || item.content}</span></article>`).join("") || "<article><strong>公告</strong><span>目前沒有公告。</span></article>";
-}
-
-function renderChapters() {
-  $("#chapterGrid").innerHTML = state.chapters.map((chapter) => `<article class="module-card"><span class="path-badge">${chapter.semester || "國中生物"}</span><h3>${chapter.chapter_name || chapter.chapter_title}</h3><p>${chapter.image_note_template?.one_sentence_memory || chapter.visual_metaphor || "先看核心概念，再練題。"}</p><div class="tag-row">${(chapter.key_concepts || []).slice(0, 4).map((tag) => `<span>${tag}</span>`).join("")}</div><button class="secondary-button" type="button" data-chapter="${chapter.chapter_id}">看圖像筆記</button></article>`).join("");
-  document.querySelectorAll("[data-chapter]").forEach((button) => button.addEventListener("click", () => showChapterNote(button.dataset.chapter)));
-}
-
-function showChapterNote(chapterId) {
-  const chapter = state.chapters.find((item) => item.chapter_id === chapterId);
-  if (!chapter) return;
-  $("#notes").hidden = false;
-  $("#notesContent").innerHTML = noteCard(chapter);
-  $("#notes").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function noteCard(chapter) {
-  const template = chapter.image_note_template || {};
-  const points = (chapter.common_exam_points || []).slice(0, 3);
-  return `<article class="visual-note-card"><div class="note-visual">${chapter.visual_metaphor || template.visual_metaphor || "圖像記憶"}</div><div><h3>${chapter.chapter_name || chapter.chapter_title}</h3><p>${template.one_sentence_memory || "用一張圖抓核心概念。"}</p><h4>常考重點</h4><ul>${points.map((point) => `<li>${point}</li>`).join("")}</ul></div></article>`;
-}
-
-function diagnosisQuestions() {
-  return state.questions.filter((question) => question.is_active !== false).slice(0, state.currentTrack === "exam" ? 8 : 5);
-}
-
-function renderQuiz() {
-  $("#quizForm").innerHTML = diagnosisQuestions().map((question, index) => `<fieldset class="quiz-item"><legend>${index + 1}. ${question.question_text}</legend>${(question.options || []).map((option, optionIndex) => { const letter = String.fromCharCode(65 + optionIndex); return `<label><input type="radio" name="${question.question_id}" value="${letter}"> ${letter}. ${option}</label>`; }).join("")}</fieldset>`).join("") + '<button class="primary-button" type="submit">送出診斷</button>';
-}
-
-function submitQuiz(event) {
-  event.preventDefault();
-  const questions = diagnosisQuestions();
-  const wrong = [];
-  let correct = 0;
-  questions.forEach((question) => {
-    const answer = new FormData(event.currentTarget).get(question.question_id);
-    if (answer === question.answer) correct += 1;
-    else wrong.push(question);
-  });
-  const weak = wrong[0] || questions[0];
-  state.weakChapterId = weak?.chapter_id;
-  const chapter = state.chapters.find((item) => item.chapter_id === state.weakChapterId) || state.chapters[0];
-  $("#quizResult").hidden = false;
-  $("#quizResult").innerHTML = `<h3>診斷完成：${correct} / ${questions.length}</h3><p>最需要補強：<strong>${chapterName(state.weakChapterId)}</strong></p><p>建議：先看圖像筆記，再做復仇檢核。</p>`;
-  if (chapter) { $("#notes").hidden = false; $("#notesContent").innerHTML = noteCard(chapter); }
-  $("#quizResult").scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
-function renderRecheck() {
-  const chapterQuestions = state.questions.filter((question) => !state.weakChapterId || question.chapter_id === state.weakChapterId).slice(0, 3);
-  $("#recheckForm").innerHTML = chapterQuestions.map((question, index) => `<fieldset class="quiz-item"><legend>${index + 1}. ${question.question_text}</legend>${(question.options || []).map((option, optionIndex) => { const letter = String.fromCharCode(65 + optionIndex); return `<label><input type="radio" name="${question.question_id}" value="${letter}"> ${letter}. ${option}</label>`; }).join("")}</fieldset>`).join("") + '<button class="primary-button" type="submit">送出復仇檢核</button>';
-}
-
-function submitRecheck(event) {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  const ids = [...data.keys()];
-  const correct = ids.filter((id) => { const question = state.questions.find((item) => item.question_id === id); return question && data.get(id) === question.answer; }).length;
-  $("#recheckResult").hidden = false;
-  $("#recheckResult").innerHTML = `<h3>復仇檢核完成：${correct} / ${ids.length}</h3><p>${correct === ids.length ? "這一輪掌握度不錯，可以前往下一章。" : "還有不穩的地方，請回到圖像筆記再看一次常考重點。"}</p>`;
-}
-
-function renderNews() {
-  const chapterFilter = $("#newsChapterFilter")?.value || "all";
-  const tagFilter = $("#newsTagFilter")?.value || "all";
-  const active = state.news.filter((item) => { const tags = [...(item.concept_tags || []), ...(item.issue_tags || item.tags || [])]; return item.is_active !== false && (chapterFilter === "all" || item.chapter_id === chapterFilter) && (tagFilter === "all" || tags.includes(tagFilter)); }).slice(0, 12);
-  $("#newsList").innerHTML = active.map((item, index) => `<button class="${index === 0 ? "active" : ""}" type="button" data-news="${item.news_id}"><strong>${item.title}</strong><span>${chapterName(item.chapter_id)}</span></button>`).join("");
-  document.querySelectorAll("[data-news]").forEach((button) => button.addEventListener("click", () => showNews(button.dataset.news)));
-  if (active[0]) showNews(active[0].news_id); else $("#newsDetail").innerHTML = "<p>目前沒有符合篩選的時事。</p>";
-}
-
-function renderNewsFilters() {
-  const chapterSelect = $("#newsChapterFilter");
-  const tagSelect = $("#newsTagFilter");
-  chapterSelect.innerHTML = '<option value="all">全部章節</option>' + state.chapters.map((chapter) => `<option value="${chapter.chapter_id}">${chapter.chapter_name || chapter.chapter_title}</option>`).join("");
-  const tags = [...new Set(state.news.flatMap((item) => [...(item.concept_tags || []), ...(item.issue_tags || item.tags || [])]))].sort();
-  tagSelect.innerHTML = '<option value="all">全部標籤</option>' + tags.map((tag) => `<option value="${tag}">${tag}</option>`).join("");
-  chapterSelect.addEventListener("change", renderNews);
-  tagSelect.addEventListener("change", renderNews);
-}
-
-function showNews(newsId) {
-  const item = state.news.find((news) => news.news_id === newsId);
-  if (!item) return;
-  document.querySelectorAll("[data-news]").forEach((button) => button.classList.toggle("active", button.dataset.news === newsId));
-  $("#newsDetail").innerHTML = `<span class="path-badge">${chapterName(item.chapter_id)}</span><h3>${item.title}</h3><p>${item.student_summary || item.summary}</p><p><strong>標籤：</strong>${[...(item.concept_tags || []), ...(item.issue_tags || item.tags || [])].join("、")}</p><p><strong>出處：</strong>${item.url ? `<a href="${item.url}">${item.source_name || "來源"}</a>` : item.source_name || item.source_title}</p><h4>討論問題</h4><ul>${[...(item.science_literacy_questions || []), ...(item.discussion_prompts || item.discussion_questions || [])].slice(0, 4).map((question) => `<li>${question}</li>`).join("")}</ul>`;
-}
-
-async function init() {
-  const [chapters, questions, news, announcements, mocks, calendar, students] = await Promise.all([loadJson(dataFiles.chapters, []), loadJson(dataFiles.questions, []), loadJson(dataFiles.news, []), loadJson(dataFiles.announcements, []), loadJson(dataFiles.mocks, []), loadJson(dataFiles.calendar, {}), loadStudents()]);
-  Object.assign(state, { chapters, questions, news, announcements, mocks, calendar, students });
-  renderCountdown(); renderAnnouncements(); renderChapters(); renderQuiz(); renderNewsFilters(); renderNews(); setTrack("summer");
-}
-
-document.querySelectorAll("[data-track]").forEach((button) => button.addEventListener("click", () => { setTrack(button.dataset.track); renderQuiz(); }));
-$("#verifyStudent").addEventListener("click", verifyStudent);
-$("#quizForm").addEventListener("submit", submitQuiz);
-$("#startRecheck").addEventListener("click", () => { $("#recheck").hidden = false; renderRecheck(); $("#recheck").scrollIntoView({ behavior: "smooth", block: "start" }); });
-$("#recheckForm").addEventListener("submit", submitRecheck);
-init();
+const dataFiles={chapters:"data/chapters.json",questions:"data/questions.json",news:"data/news_database.json",announcements:"data/announcements.json",mocks:"data/mock_exam_schedule.json",calendar:"data/exam_calendar.json",students:"data/demo_student_directory.json"};
+const sheetRoster={csvUrl:"https://docs.google.com/spreadsheets/d/1RVZeKYN8_FJsgNfNqfNlXzFEWc-I8bx9b_lyEgyOI2I/gviz/tq?tqx=out:csv&sheet=%E6%B8%AC%E8%A9%A6%E5%AD%B8%E7%94%9F%E5%90%8D%E5%86%8A"};
+const state={chapters:[],questions:[],news:[],announcements:[],mocks:[],calendar:null,students:[],currentStudent:null,currentTrack:"summer",weakChapterId:null,dataErrors:{}};
+const $=s=>document.querySelector(s);
+async function loadJson(path,fallback){try{const r=await fetch(path,{cache:"no-store"});if(!r.ok)throw new Error(`${path} ${r.status}`);return await r.json()}catch(e){console.warn(`BioQuest data fallback: ${e.message}`);state.dataErrors[path]=e.message;return fallback}}
+function parseCsv(text){const rows=[];let row=[],cell="",q=false;for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&q&&n==='"'){cell+='"';i++}else if(c==='"')q=!q;else if(c===","&&!q){row.push(cell);cell=""}else if((c==="\n"||c==="\r")&&!q){if(cell||row.length)rows.push([...row,cell]);row=[];cell="";if(c==="\r"&&n==="\n")i++}else cell+=c}if(cell||row.length)rows.push([...row,cell]);return rows}
+async function loadStudents(){try{const r=await fetch(sheetRoster.csvUrl,{cache:"no-store"});if(!r.ok)throw new Error(`Google Sheet ${r.status}`);const rows=parseCsv(await r.text()).filter(row=>row.some(Boolean));const heads=rows.shift().map(h=>h.trim());const students=rows.map(row=>Object.fromEntries(heads.map((h,i)=>[h,row[i]||""]))).filter(x=>x.learning_id&&x.nickname).map(x=>({student_id:x.learning_id,nickname:x.nickname,grade:Number(x.grade||8),class_id:x.class_id||"",faction:x.faction||"未分派系",track:x.track||(+x.grade===9?"exam":"summer"),title_level:x.title_level||"N",xp:Number(x.xp||0),achievement:x.achievement?[x.achievement]:[]}));if(students.length)return students;throw new Error("Google Sheet roster empty")}catch(e){console.warn(`BioQuest roster fallback: ${e.message}`);return loadJson(dataFiles.students,[])}}
+function daysUntil(d){if(!d)return"--";const t=new Date(`${d}T00:00:00+08:00`).getTime();return Math.max(0,Math.ceil((t-Date.now())/86400000))}
+function chapterName(id){const c=state.chapters.find(x=>x.chapter_id===id);return c?.chapter_name||c?.chapter_title||"核心概念"}
+function testNotice(label="此功能"){return `<article class="empty-card"><strong>${label}</strong><span>此功能為測試版，資料建置中。</span></article>`}
+function setTrack(track){state.currentTrack=track||"summer";document.querySelectorAll("[data-track]").forEach(b=>b.classList.toggle("active",b.dataset.track===state.currentTrack));const exam=state.currentTrack==="exam";$("#trackLabel").textContent=exam?"目前模式：八升九":"目前模式：七升八";$("#trackTitle").textContent=exam?"會考備戰模式":"暑假保溫模式";$("#trackGoal").textContent=exam?"先用診斷題找弱點，再看圖像筆記，最後用復仇檢核確認是否真的會。":"每天完成一個短任務，維持細胞、人體、植物與生態概念的熟悉感。";$("#singleNextTask").textContent=exam?"下一步：完成 8 題診斷挑戰。":"下一步：完成 5 題暖身診斷。"}
+function renderTitleCard(s){$("#titleNickname").textContent=s.nickname;$("#titleTrack").textContent=`所屬派系：${s.faction||"未分派系"}｜模式：${s.track==="exam"?"九年級會考模式":"八年級暑假模式"}`;$("#titleXpBar").style.width=`${Math.min(100,Math.round((s.xp||0)/10))}%`;$("#titleMeta").textContent=`稀有度 ${s.title_level||"N"}｜XP ${s.xp||0}｜${(s.achievement||[]).join("、")||"尚未解鎖成就"}`}
+function renderTodayTasks(s=state.currentStudent){const mode=s?.track==="exam"?"會考備戰":"暑假保溫";$("#todayTasks").innerHTML=[["①","診斷挑戰","先做題找弱點","#diagnosis"],["②","圖像筆記","看一張卡記重點","#notes"],["③","復仇檢核","再戰不熟概念","#recheck"]].map(t=>`<a class="task-card" href="${t[3]}"><span>${t[0]}</span><strong>${t[1]}</strong><small>${mode}｜${t[2]}</small></a>`).join("")}
+function unlockStudentFeatures(s){state.currentStudent=s;document.body.classList.add("is-logged-in");document.querySelectorAll(".student-gated,.learning-nav").forEach(el=>{el.hidden=false});renderTodayTasks(s);renderQuiz()}
+function verifyStudent(){const id=$("#loginStudentId").value.trim(),nick=$("#loginNickname").value.trim(),status=$("#studentVerifyStatus");const show=(m,ok=false)=>{status.textContent=m;status.classList.toggle("verified",ok);status.classList.toggle("error",!ok)};if(!id&&!nick)return show("請輸入學習代號與稱號。範例：80101／滅世黑炎龍帝。");if(!id)return show("請輸入學習代號。");if(!nick)return show("請輸入稱號。");const s=state.students.find(x=>x.student_id===id&&x.nickname===nick);if(!s)return show("查無此學習代號＋稱號。請確認大小寫與文字完全相同。");localStorage.setItem("bioquest_demo_student",JSON.stringify(s));setTrack(s.track);renderTitleCard(s);unlockStudentFeatures(s);show(`歡迎回來，${s.nickname}。所屬派系：${s.faction||"未分派系"}。模式：${s.track==="exam"?"九年級會考模式":"八年級暑假模式"}。稀有度：${s.title_level||"N"}。`,true);$("#today")?.scrollIntoView({behavior:"smooth",block:"start"})}
+function renderCountdown(){const cap=state.calendar?.cap_exam||state.calendar;const next=state.mocks.find(m=>daysUntil(m.exam_date)>0)||state.mocks[0];$("#capCountdown").textContent=cap?.exam_date?`${daysUntil(cap.exam_date)} 天`:"--";$("#capDateLabel").textContent=cap?.exam_date?`${cap.title||"會考"}：${cap.exam_date}`:"請在 exam_calendar.json 設定";$("#mockCountdown").textContent=next?.exam_date?`${daysUntil(next.exam_date)} 天`:"--";$("#mockDateLabel").textContent=next?.exam_date?`${next.title||"模考"}：${next.exam_date}`:"請在 mock_exam_schedule.json 設定";const mission=state.calendar?.weekly_mission||"完成診斷、筆記與復仇檢核。",goal=state.calendar?.monthly_goal||"完成兩章補強。",phase=state.calendar?.review_phase||"複習期";const p=document.querySelector(".countdown-grid article:nth-child(3) p");if(p)p.textContent=`${phase}｜${mission}｜${goal}`}
+function renderAnnouncements(){const items=state.announcements.filter(x=>x.is_active!==false).slice(0,5);$("#announcementStrip").innerHTML=items.length?items.map(x=>`<article><strong>${x.type||"公告"}</strong><span>${x.title||x.content}</span></article>`).join(""):testNotice("重要公告")}
+function renderChapters(){if(!state.chapters.length){$("#chapterGrid").innerHTML=testNotice("章節地圖");return}$("#chapterGrid").innerHTML=state.chapters.map(c=>`<article class="module-card"><span class="path-badge">${c.semester||"國中生物"}</span><h3>${c.chapter_name||c.chapter_title}</h3><p>${c.image_note_template?.one_sentence_memory||c.visual_metaphor||"先看核心概念，再練題。"}</p><div class="tag-row">${(c.key_concepts||[]).slice(0,4).map(t=>`<span>${t}</span>`).join("")}</div><button class="secondary-button" type="button" data-chapter="${c.chapter_id}">看圖像筆記</button></article>`).join("");document.querySelectorAll("[data-chapter]").forEach(b=>b.addEventListener("click",()=>showChapterNote(b.dataset.chapter)))}
+function noteCard(c){const t=c.image_note_template||{},pts=(c.common_exam_points||[]).slice(0,3);return `<article class="visual-note-card"><div class="note-visual">${c.visual_metaphor||t.visual_metaphor||"圖像記憶"}</div><div><h3>${c.chapter_name||c.chapter_title}</h3><p>${t.one_sentence_memory||"用一張圖抓核心概念。"}</p><h4>常考重點</h4><ul>${pts.map(p=>`<li>${p}</li>`).join("")}</ul></div></article>`}
+function showChapterNote(id){const c=state.chapters.find(x=>x.chapter_id===id);if(!c)return;$("#notes").hidden=false;$("#notesContent").innerHTML=noteCard(c);$("#notes").scrollIntoView({behavior:"smooth",block:"start"})}
+function diagnosisQuestions(){return state.questions.filter(q=>q.is_active!==false).slice(0,state.currentTrack==="exam"?8:5)}
+function renderQuiz(){const qs=diagnosisQuestions();if(!qs.length){$("#quizForm").innerHTML=testNotice("診斷挑戰");return}$("#quizForm").innerHTML=qs.map((q,i)=>`<fieldset class="quiz-item"><legend>${i+1}. ${q.question_text}</legend>${(q.options||[]).map((o,j)=>{const L=String.fromCharCode(65+j);return `<label><input type="radio" name="${q.question_id}" value="${L}"> ${L}. ${o}</label>`}).join("")}</fieldset>`).join("")+`<button class="primary-button" type="submit">送出診斷</button>`}
+function submitQuiz(e){e.preventDefault();const qs=diagnosisQuestions();if(!qs.length)return;const fd=new FormData(e.currentTarget),wrong=[];let ok=0;qs.forEach(q=>{const a=fd.get(q.question_id);if(a===q.answer)ok++;else wrong.push({...q,student_answer:a||"未作答"})});const weak=(wrong[0]||qs[0]);state.weakChapterId=weak?.chapter_id;const c=state.chapters.find(x=>x.chapter_id===state.weakChapterId)||state.chapters[0];$("#quizResult").hidden=false;$("#quizResult").innerHTML=`<h3>診斷完成：${ok} / ${qs.length}</h3><p>目前最需要補強：<strong>${chapterName(state.weakChapterId)}</strong></p><div class="ability-bar"><span style="width:${Math.round(ok/qs.length*100)}%"></span></div><p>建議：先看圖像筆記，再做復仇檢核。</p><div class="wrong-list">${(wrong.length?wrong:qs.slice(0,1)).slice(0,3).map(q=>`<article><strong>${q.question_id}｜${chapterName(q.chapter_id)}</strong><span>你的答案：${q.student_answer||"答對"}｜正解：${q.answer}</span><p>${q.explanation||q.why_correct||"這題解析資料建置中。"}</p><small>迷思提醒：${q.common_misconception||"先抓題目關鍵字，再回章節地圖確認概念。"}</small></article>`).join("")}</div>`;if(c){$("#notes").hidden=false;$("#notesContent").innerHTML=noteCard(c)}$("#quizResult").scrollIntoView({behavior:"smooth",block:"center"})}
+function renderRecheck(){const qs=state.questions.filter(q=>!state.weakChapterId||q.chapter_id===state.weakChapterId).slice(0,3);if(!qs.length){$("#recheckForm").innerHTML=testNotice("復仇檢核");return}$("#recheckForm").innerHTML=qs.map((q,i)=>`<fieldset class="quiz-item"><legend>${i+1}. ${q.question_text}</legend>${(q.options||[]).map((o,j)=>{const L=String.fromCharCode(65+j);return `<label><input type="radio" name="${q.question_id}" value="${L}"> ${L}. ${o}</label>`}).join("")}</fieldset>`).join("")+`<button class="primary-button" type="submit">送出復仇檢核</button>`}
+function submitRecheck(e){e.preventDefault();const fd=new FormData(e.currentTarget),ids=[...new Set([...e.currentTarget.querySelectorAll("input[type='radio']")].map(i=>i.name))];const ok=ids.filter(id=>{const q=state.questions.find(x=>x.question_id===id);return q&&fd.get(id)===q.answer}).length;$("#recheckResult").hidden=false;$("#recheckResult").innerHTML=`<h3>復仇檢核完成：${ok} / ${ids.length}</h3><p>${ok===ids.length?"這一輪掌握度不錯，可以前往下一章。":"還有不穩的地方，請回到圖像筆記再看一次常考重點。"}</p>`}
+function renderNewsFilters(){const cs=$("#newsChapterFilter"),ts=$("#newsTagFilter");if(!cs||!ts)return;cs.innerHTML='<option value="all">全部章節</option>'+state.chapters.map(c=>`<option value="${c.chapter_id}">${c.chapter_name||c.chapter_title}</option>`).join("");const tags=[...new Set(state.news.flatMap(n=>[...(n.concept_tags||[]),...(n.issue_tags||n.tags||[])]))].sort();ts.innerHTML='<option value="all">全部標籤</option>'+tags.map(t=>`<option value="${t}">${t}</option>`).join("");cs.addEventListener("change",renderNews);ts.addEventListener("change",renderNews)}
+function renderNews(){const c=$("#newsChapterFilter")?.value||"all",tag=$("#newsTagFilter")?.value||"all";const items=state.news.filter(n=>{const tags=[...(n.concept_tags||[]),...(n.issue_tags||n.tags||[])];return n.is_active!==false&&(c==="all"||n.chapter_id===c)&&(tag==="all"||tags.includes(tag))}).slice(0,12);$("#newsList").innerHTML=items.map((n,i)=>`<button class="${i===0?"active":""}" type="button" data-news="${n.news_id}"><strong>${n.title}</strong><span>${chapterName(n.chapter_id)}</span></button>`).join("");document.querySelectorAll("[data-news]").forEach(b=>b.addEventListener("click",()=>showNews(b.dataset.news)));if(items[0])showNews(items[0].news_id);else $("#newsDetail").innerHTML=testNotice("素養時事")}
+function showNews(id){const n=state.news.find(x=>x.news_id===id);if(!n)return;document.querySelectorAll("[data-news]").forEach(b=>b.classList.toggle("active",b.dataset.news===id));const tags=[...(n.concept_tags||[]),...(n.issue_tags||n.tags||[])];$("#newsDetail").innerHTML=`<span class="path-badge">${chapterName(n.chapter_id)}</span><h3>${n.title}</h3><p>${n.student_summary||n.summary||"摘要建置中。"}</p><p><strong>標籤：</strong>${tags.join("、")}</p><p><strong>出處：</strong>${n.url?`<a href="${n.url}" target="_blank" rel="noopener">${n.source_name||"來源"}</a>`:n.source_name||"來源建置中"}</p><h4>討論問題</h4><ul>${[...(n.science_literacy_questions||[]),...(n.discussion_prompts||n.discussion_questions||[])].slice(0,4).map(q=>`<li>${q}</li>`).join("")}</ul>`}
+async function init(){const [chapters,questions,news,announcements,mocks,calendar,students]=await Promise.all([loadJson(dataFiles.chapters,[]),loadJson(dataFiles.questions,[]),loadJson(dataFiles.news,[]),loadJson(dataFiles.announcements,[]),loadJson(dataFiles.mocks,[]),loadJson(dataFiles.calendar,{}),loadStudents()]);Object.assign(state,{chapters,questions,news,announcements,mocks,calendar,students});renderCountdown();renderAnnouncements();renderChapters();renderQuiz();renderNewsFilters();renderNews();setTrack("summer");let stored=null;try{stored=JSON.parse(localStorage.getItem("bioquest_demo_student")||"null")}catch(e){localStorage.removeItem("bioquest_demo_student")}if(stored?.student_id&&stored?.nickname){const fresh=students.find(x=>x.student_id===stored.student_id&&x.nickname===stored.nickname)||stored;setTrack(fresh.track||"summer");renderTitleCard(fresh);unlockStudentFeatures(fresh);$("#studentVerifyStatus").textContent=`歡迎回來，${fresh.nickname}。`;$("#studentVerifyStatus").classList.add("verified")}}
+document.querySelectorAll("[data-track]").forEach(b=>b.addEventListener("click",()=>{setTrack(b.dataset.track);renderQuiz()}));
+document.querySelectorAll("[data-demo-login]").forEach(b=>b.addEventListener("click",()=>{const [id,nick]=b.dataset.demoLogin.split("|");$("#loginStudentId").value=id;$("#loginNickname").value=nick;verifyStudent()}));
+$("#verifyStudent").addEventListener("click",verifyStudent);$("#quizForm").addEventListener("submit",submitQuiz);$("#startRecheck").addEventListener("click",()=>{$("#recheck").hidden=false;renderRecheck();$("#recheck").scrollIntoView({behavior:"smooth",block:"start"})});$("#recheckForm").addEventListener("submit",submitRecheck);init();
